@@ -606,21 +606,21 @@ async function startStage2() {
   setProgress(5,2);
   state2={je:'pending',hy:'pending',ga:'pending'};
 
-  var interval = setInterval(function(){
-    var done=Object.values(state2).filter(function(s){return s==='done'||s==='error';}).length;
-    setProgress(5+done*30,2);
-    if(done===3){clearInterval(interval);setProgress(100,2);showToast('Pipeline completo','#8b5cf6');}
-  },400);
+  var completed2 = 0;
+  function onCard2Done() {
+    completed2++;
+    setProgress(5 + completed2*30, 2);
+    if (completed2 === 3) {
+      setProgress(100, 2);
+      showToast('Pipeline completo — 6 herramientas listas', '#14A39A');
+    }
+  }
 
-  var promises=STAGE2.map(function(c,i){
-    return new Promise(function(resolve){
-      setTimeout(function(){runCard2(c,currentTopic,globalResults).then(resolve).catch(resolve);},i*500);
-    });
+  STAGE2.forEach(function(c, i) {
+    setTimeout(function(){
+      runCard2(c, currentTopic, globalResults).then(onCard2Done).catch(onCard2Done);
+    }, i * 500);
   });
-
-  await Promise.all(promises);
-  clearInterval(interval);
-  setProgress(100,2);
 }
 
 async function startResearch() {
@@ -654,23 +654,25 @@ async function startResearch() {
     '</div>';
 
   setProgress(5,1);
-  var interval=setInterval(function(){
-    var done=Object.values(state1).filter(function(s){return s==='done'||s==='error';}).length;
-    setProgress(5+done*30,1);
-    if(done===3){clearInterval(interval);setProgress(100,1);showStage2Trigger();}
-  },400);
 
-  var promises=STAGE1.map(function(c,i){
-    return new Promise(function(resolve){
-      setTimeout(function(){runCard1(c,topic).then(resolve).catch(resolve);},i*350);
-    });
+  // Track completions directly — no interval race condition
+  var completed1 = 0;
+  function onCard1Done() {
+    completed1++;
+    setProgress(5 + completed1*30, 1);
+    if (completed1 === 3) {
+      setProgress(100, 1);
+      showStage2Trigger();
+      btn.disabled=false;
+      btn.innerHTML='<i class="ti ti-telescope"></i>Investigar';
+    }
+  }
+
+  STAGE1.forEach(function(c, i) {
+    setTimeout(function(){
+      runCard1(c, topic).then(onCard1Done).catch(onCard1Done);
+    }, i * 350);
   });
-
-  await Promise.all(promises);
-  clearInterval(interval);
-  setProgress(100,1);
-  btn.disabled=false;
-  btn.innerHTML='<i class="ti ti-telescope"></i>Investigar';
 }
 
 document.getElementById('topicInput').addEventListener('keydown',function(e){if(e.key==='Enter')startResearch();});
