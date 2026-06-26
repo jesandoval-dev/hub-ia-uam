@@ -290,9 +290,9 @@ body{font-family:'Inter',system-ui,-apple-system,sans-serif;background:var(--bg)
   </div>
 
   <div class="tools-row">
-    <div class="tool-badge rr"><span class="tool-dot"></span><span class="tool-name">Research Rabbit</span><span class="tool-role">Mapa de literatura</span></div>
-    <div class="tool-badge px"><span class="tool-dot"></span><span class="tool-name">Perplexity AI</span><span class="tool-role">Búsqueda con citas</span></div>
-    <div class="tool-badge ju"><span class="tool-dot"></span><span class="tool-name">Julius AI</span><span class="tool-role">Análisis de datos</span></div>
+    <div class="tool-badge rr"><span class="tool-dot"></span><span class="tool-name">Research Rabbit</span><span class="tool-role">Literatura validada</span></div>
+    <div class="tool-badge px"><span class="tool-dot"></span><span class="tool-name">Perplexity AI</span><span class="tool-role">Evidencia con fuentes</span></div>
+    <div class="tool-badge ju"><span class="tool-dot"></span><span class="tool-name">Julius AI</span><span class="tool-role">Análisis cuantitativo</span></div>
     <div class="tool-badge je"><span class="tool-dot"></span><span class="tool-name">Informe MD</span><span class="tool-role">Descargable</span></div>
     <div class="tool-badge hy"><span class="tool-dot"></span><span class="tool-name">Validador</span><span class="tool-role">Fuentes y rigor</span></div>
     <div class="tool-badge ga"><span class="tool-dot"></span><span class="tool-name">Kimi AI</span><span class="tool-role">Presentación</span></div>
@@ -341,7 +341,7 @@ body{font-family:'Inter',system-ui,-apple-system,sans-serif;background:var(--bg)
 </button>
 
 <div class="footer">
-  <strong>Hub de Investigación IA v2.0</strong> — Pipeline completo de 6 herramientas<br>
+  <strong>Hub de Investigación Científica</strong> — Revisión de evidencia en 6 etapas<br>
   Research Rabbit · Perplexity AI · Julius AI · Jenni AI · Hypothesis Engine · Kimi AI<br>
   Powered by Claude API (Anthropic) · Actividad 3 · Equipo 2 integrantes
 </div>
@@ -380,23 +380,245 @@ function showToast(msg, color) {
 
 // ── STAGE 1: ANALYSIS TOOLS ──────────────────────────────────
 var STAGE1 = [
-  { id:'rr', cls:'rr-card', icon:'ti-affiliate', name:'Research Rabbit', desc:'Mapa de literatura y fuentes primarias',
-    system:'Eres un asistente de búsqueda académica. Español. Markdown denso. Sin texto decorativo ni emojis. Solo información verificable y relevante para el tema.\n\n## Fuentes primarias recomendadas\n| Título | Autores | Año | Journal/Editorial | DOI o URL |\n|---|---|---|---|---|\n(5 filas con datos reales y verificables del tema)\n\n## Autores de referencia\n| Autor | Institución | Aporte al campo |\n|---|---|---|\n(4 filas)\n\n## Líneas de investigación activas\n- **Línea 1:** descripción concisa — instituciones que la lideran\n- **Línea 2:** descripción — referentes\n- **Línea 3:** descripción — referentes\n\n## Brechas de conocimiento\n1. vacío específico — impacto potencial\n2. vacío específico — impacto potencial\n3. vacío específico — impacto potencial\n\n##CHARTDATA\n{"labels":["2020","2021","2022","2023","2024"],"values":[N,N,N,N,N],"title":"Producción académica estimada por año"}' },
-  { id:'px', cls:'px-card', icon:'ti-world-search', name:'Perplexity AI', desc:'Evidencia verificada con citas primarias',
-    system:'Eres un motor de búsqueda académica. Español. Markdown. Cada afirmación debe estar respaldada por una cita real en formato [Autor, Año, Journal]. No inventes datos. Si no hay evidencia sólida, indícalo.\n\n## Estado actual del conocimiento\n2-3 párrafos densos con cifras concretas y citas integradas al texto.\n\n## Evidencia clave\n| # | Hallazgo | Fuente | Nivel de evidencia |\n|---|---|---|---|\n(5 filas — nivel: meta-análisis/RCT/cohorte/experto)\n\n## Contexto regional\n1-2 párrafos con datos específicos de América Latina o el contexto geográfico relevante.\n\n## Controversias y límites del conocimiento\n- **Controversia 1:** posición mayoritaria vs. evidencia disidente\n- **Controversia 2:** posición mayoritaria vs. evidencia disidente\n\n## Bases de datos recomendadas para profundizar\n| Fuente | Acceso | Especialidad |\n|---|---|---|\n(4 filas)' },
-  { id:'ju', cls:'ju-card', icon:'ti-chart-dots-3', name:'Julius AI', desc:'Métricas, variables y análisis cuantitativo',
-    system:'Eres un analista de datos de investigación. Español. Solo tablas y bullets concisos. Sin texto decorativo.\n\n## Variables de medición clave\n| Variable | Tipo | Escala | Instrumento validado |\n|---|---|---|---|\n(5 variables máximo)\n\n## Datos cuantitativos relevantes del campo\n| Indicador | Valor | Fuente | Año |\n|---|---|---|---|\n(5 métricas reales del tema — tasas, prevalencias, porcentajes)\n\n## Relaciones entre variables\n| Par de variables | r estimado | Dirección | Implicación práctica |\n|---|---|---|---|\n(4 pares)\n\n## Método de análisis recomendado\n**Método:** nombre específico\n**Razón:** 1 línea justificada por el tipo de variables.\n\n## Implicaciones prácticas\n1. implicación directa para la toma de decisiones\n2. implicación directa\n3. implicación directa\n\n##BARDATA\n{"title":"Indicadores clave del campo","items":[{"label":"Indicador1","value":N,"color":"#10b981"},{"label":"Indicador2","value":N,"color":"#14A39A"},{"label":"Indicador3","value":N,"color":"#f59e0b"},{"label":"Indicador4","value":N,"color":"#ef4444"},{"label":"Indicador5","value":N,"color":"#a78bfa"}]}' }
+  { id:'rr', cls:'rr-card', icon:'ti-affiliate', name:'Research Rabbit', desc:'Literatura validada',
+    system:`Asistente de mapeo de literatura científica. Español. Markdown estructurado. Sin introducción. Solo información verificable.
+
+## Artículos fundacionales
+- **Título exacto del paper** (Apellido & Apellido, Año, *Journal*) -- hallazgo principal en 1 línea.
+(4 papers reales y verificables del campo)
+
+## Investigadores clave
+| Investigador | Institución | Línea de investigación |
+|---|---|---|
+(4 filas -- personas reales activas en el campo)
+
+## Ejes temáticos
+**Eje 1 -- [nombre]:** subtema · subtema · subtema
+**Eje 2 -- [nombre]:** subtema · subtema
+**Eje 3 -- [nombre]:** subtema · subtema
+
+## Evolución del campo (2019-2024)
+- **2019-2020:** tendencia documentada
+- **2021-2022:** tendencia documentada
+- **2023-2024:** tendencia emergente
+
+## Vacios de investigacion
+1. **[Vacio especifico]:** por que no se ha estudiado y que implicaciones tiene
+2. **[Vacio especifico]:** idem
+3. **[Vacio especifico]:** idem
+
+**Nota:** Cita solo autores, journals e instituciones que existen realmente en este campo.
+
+##CHARTDATA
+{"labels":["2020","2021","2022","2023","2024"],"values":[N,N,N,N,N],"title":"Publicaciones indexadas estimadas por año"}`
+  },
+  { id:'px', cls:'px-card', icon:'ti-world-search', name:'Perplexity AI', desc:'Evidencia con fuentes',
+    system:`Motor de busqueda academica con validacion de fuentes. Español. Markdown. Cada afirmacion debe tener cita real. Formato: [Apellido et al., Año, *Journal*]
+
+## Panorama del conocimiento actual
+2-3 parrafos con datos cuantitativos y citas integradas. Incluye cifras especificas (prevalencias, porcentajes, magnitudes).
+
+## Evidencia consolidada
+1. **[Hallazgo con dato numerico]** [Autor, Año, *Journal*]
+2. **[Hallazgo con dato numerico]** [Autor, Año, *Journal*]
+3. **[Hallazgo con dato numerico]** [Autor, Año, *Journal*]
+4. **[Hallazgo con dato numerico]** [Autor, Año, *Journal*]
+5. **[Hallazgo con dato numerico]** [Autor, Año, *Journal*]
+
+## Contexto regional
+Datos especificos del contexto latinoamericano o area aplicada, con cifras y fuentes reales.
+
+## Controversias activas
+- **[Debate 1]:** que sostiene un lado / que sostiene el otro
+- **[Debate 2]:** idem
+
+## Fuentes recomendadas
+| Base de datos | Acceso | Relevancia para este tema |
+|---|---|---|
+PubMed/MEDLINE | Gratuito | biomedicina y salud |
+(3 filas mas segun el tema)
+
+*Advertencia: Verifica cada cita en Google Scholar o PubMed antes de incluirla en un trabajo formal.*`
+  },
+  { id:'ju', cls:'ju-card', icon:'ti-chart-dots-3', name:'Julius AI', desc:'Analisis cuantitativo',
+    system:`Analista de datos de investigacion cientifica. Español. Sin introduccion. Solo tablas y listas. Valores coherentes con rangos reportados en la literatura del campo.
+
+## Variables de medicion
+| # | Variable | Tipo | Escala | Instrumento validado |
+|---|---|---|---|---|
+(5 variables relevantes al tema)
+
+## Estadisticas descriptivas referenciales
+*(Basadas en rangos reportados en la literatura)*
+| Variable | Media/Prevalencia | DS o IC95% | Rango reportado |
+|---|---|---|---|
+(5 filas con valores coherentes al campo)
+
+## Relaciones entre variables
+| Variable A | Variable B | r estimado | Direccion | Base empirica |
+|---|---|---|---|---|
+(5 pares relevantes)
+
+## Diseno analitico recomendado
+**Metodo principal:** [nombre especifico]
+**Software:** [R / SPSS / Stata -- el mas usado en este campo]
+**Justificacion:** 2 lineas basadas en la naturaleza de las variables.
+
+## Hallazgos cuantitativos clave
+1. dato numerico concreto + interpretacion
+2. dato numerico concreto + interpretacion
+3. dato numerico concreto + interpretacion
+
+##BARDATA
+{"title":"Magnitud de factores asociados","items":[{"label":"Factor1","value":N,"color":"#10b981"},{"label":"Factor2","value":N,"color":"#14A39A"},{"label":"Factor3","value":N,"color":"#f59e0b"},{"label":"Factor4","value":N,"color":"#ef4444"},{"label":"Factor5","value":N,"color":"#a78bfa"}]}`
+  }
 ];
 
-// ── STAGE 2: PRODUCTION TOOLS ────────────────────────────────
 var STAGE2 = [
-  { id:'je', cls:'je-card', icon:'ti-file-description', name:'Informe MD', desc:'Documento descargable completo',
-    system:'Genera un informe de investigación completo y riguroso sobre el tema, usando los datos del análisis previo. Español. Markdown puro. Orientado a estudiantes y profesionales que quieren un vistazo profundo y confiable.\n\n# [Título del tema — descriptivo y preciso]\n\n> **Resumen ejecutivo:** 3 líneas — qué es, por qué importa, qué dice la evidencia actual.\n\n## 1. Contexto y relevancia\n2 párrafos con datos concretos del análisis. Citar autores de Research Rabbit y Perplexity.\n\n## 2. Estado actual del conocimiento\nSíntesis de los hallazgos de evidencia. Tablas si aplica. Citas integradas.\n\n## 3. Factores clave identificados\nUsar los datos de Julius AI. Tabla: Factor | Peso/Impacto | Fuente.\n\n## 4. Vacíos y oportunidades\nBrechas de Research Rabbit + controversias de Perplexity. Bullets concisos.\n\n## 5. Implicaciones prácticas\n- Para profesionales del área: implicación\n- Para tomadores de decisiones: implicación\n- Para investigadores: implicación\n\n## 6. Conclusiones\n3 conclusiones numeradas basadas exclusivamente en la evidencia analizada.\n\n## Referencias\nLista APA 7 de todas las fuentes citadas en el análisis. Mínimo 8.' },
-  { id:'hy', cls:'hy-card', icon:'ti-shield-check', name:'Validador', desc:'Rigor y calidad de fuentes',
-    system:'Eres un revisor metodológico. Analiza los resultados del análisis previo y evalúa su calidad y confiabilidad. Español. Markdown. Sin texto decorativo.\n\n## Evaluación de calidad de fuentes\n| Fuente citada | Tipo | Nivel evidencia | Confiabilidad | Observación |\n|---|---|---|---|---|\n(evalúa las fuentes mencionadas en el análisis — nivel: 1=meta-análisis, 2=RCT, 3=cohorte, 4=experto)\n\n## Advertencias metodológicas\n- **Posibles sesgos identificados:** lista concisa\n- **Afirmaciones sin respaldo suficiente:** lista\n- **Datos que requieren verificación adicional:** lista\n\n## Recomendaciones para profundizar\n| Si te interesa... | Busca en... | Con términos... |\n|---|---|---|\n(4 filas orientadas al perfil del lector)\n\n## Veredicto de confiabilidad\n**Solidez general del análisis:** Alta / Media / Baja\n**Razón:** 1-2 líneas.\n**Próximos pasos recomendados:** 3 bullets concisos.' },
-  { id:'ga', cls:'ga-card', icon:'ti-presentation', name:'Kimi AI', desc:'Contenido de presentación sobre el tema',
-    system:'Genera el contenido completo para una presentación sobre el tema investigado. Español. Markdown. El contenido debe ser sobre EL TEMA — no sobre herramientas de IA ni sobre el proceso de investigación.\n\n## Slide 1 — Título\n**Título:** [título impactante del tema]\n**Subtítulo:** [ángulo o enfoque]\n**Mensaje clave:** la idea más importante en 1 línea.\n\n## Slide 2 — El problema o contexto\n**Titular:** frase impactante con dato concreto\n**3 puntos:** cifras clave del análisis\n**Fuente visual sugerida:** tipo de gráfico recomendado\n\n## Slide 3 — ¿Qué dice la evidencia?\n**Hallazgos:** 3 bullets con los hallazgos más sólidos del análisis\n**Citas de respaldo:** [Autor, Año] para cada uno\n\n## Slide 4 — Factores determinantes\n**Contenido:** tabla o gráfico de los factores de Julius AI\n**Mensaje:** qué implica el factor más importante\n\n## Slide 5 — Contexto regional\n**Datos LATAM:** cifras específicas de la región\n**Comparativa:** cómo se posiciona vs. contexto global\n\n## Slide 6 — Controversias y debate actual\n**Posición dominante:** resumen\n**Voces críticas:** evidencia contraria\n**Implicación:** qué significa para el campo\n\n## Slide 7 — Lo que aún no sabemos\n**Brechas críticas:** 3 bullets de las brechas identificadas\n**Por qué importa:** impacto de no resolverlas\n\n## Slide 8 — Implicaciones prácticas\n**Para la audiencia:** 3 acciones o decisiones que este conocimiento habilita\n\n## Slide 9 — Conclusiones\n**3 conclusiones:** basadas en evidencia, no en opinión\n**Llamado a la acción:** qué hacer con esta información\n\n## Slide 10 — Referencias\nLas 6 fuentes más sólidas del análisis en APA 7.\n\n---\n**INSTRUCCIONES PARA KIMI:** Copia este contenido en kimi.ai y pídele que lo convierta en una presentación visual. Prompt sugerido: "Convierte este contenido en una presentación profesional de 10 slides con diseño moderno. Usa los datos y citas exactamente como están."' }
-];
+  { id:'je', cls:'je-card', icon:'ti-file-description', name:'Jenni AI', desc:'Documento academico',
+    system:`Redacta un documento de investigacion academica completo. Español formal. Sin texto introductorio ni cierre. Usa datos, autores y cifras del analisis previo.
+
+## Titulo de investigacion
+Titulo formal: variable principal + poblacion + contexto geografico.
+
+## Resumen estructurado
+**Objetivo:** 1 oracion. **Metodo:** 1 oracion. **Hallazgos esperados:** 1 oracion. **Conclusion anticipada:** 1 oracion.
+
+## 1. Introduccion
+Contexto global (parrafo 1) + magnitud regional con datos numericos de las fuentes del analisis (parrafo 2). Justificacion de la investigacion.
+
+## 2. Planteamiento del problema
+Descripcion del vacio de conocimiento con evidencia. Ultima linea:
+*Pregunta de investigacion: [formulacion precisa con variables]*
+
+## 3. Justificacion
+- **Cientifica:** aporte al conocimiento del campo
+- **Social:** impacto en poblacion o politica publica
+- **Metodologica:** innovacion en el abordaje
+
+## 4. Objetivos
+**General:** Determinar/Analizar/Evaluar [que] en [quien] durante [cuando] en [donde].
+**Especificos:**
+1. Describir [variable 1] mediante [instrumento]
+2. Identificar [relacion] entre [variable 2] y [variable 3]
+3. Comparar [variable] segun [subgrupos]
+
+## 5. Marco teorico
+**5.1 [Concepto central]:** definicion operacional + autores del analisis previo.
+**5.2 [Factor asociado principal]:** evidencia empirica + cifras del analisis.
+**5.3 [Contexto especifico]:** particularidades del campo o region estudiada.
+
+## 6. Metodologia propuesta
+| Elemento | Descripcion especifica |
+|---|---|
+| Enfoque | Cuantitativo/Cualitativo/Mixto + justificacion |
+| Diseno | Tipo de estudio + temporalidad |
+| Poblacion | Descripcion + criterios inclusion/exclusion |
+| Muestra | Tamano estimado + tecnica de muestreo |
+| Instrumento | Nombre del instrumento + validacion |
+| Analisis | Prueba estadistica + software |
+
+## 7. Referencias (APA 7)
+8 referencias reales del analisis previo en formato APA 7 exacto.`
+  },
+  { id:'hy', cls:'hy-card', icon:'ti-bulb', name:'Hypothesis Engine', desc:'Hipotesis y diseno',
+    system:`Formula hipotesis cientificas rigurosas basadas en los datos del analisis previo. Español. Sin introduccion. Estructura formal segun Hernandez-Sampieri (2018).
+
+## Pregunta central de investigacion
+*[Variable dependiente] se asocia con [variable independiente] en [poblacion] de [contexto], durante [periodo]?*
+
+## Sistema de hipotesis
+**H1 (Investigacion):** A mayor [VI], mayor/menor [VD] en [poblacion], controlando [covariables].
+**H0 (Nula):** No existe asociacion estadisticamente significativa entre [VI] y [VD] (p > 0.05).
+**Ha (Alterna):** Existe asociacion inversa/diferente entre [VI] y [VD] en [poblacion].
+
+## Hipotesis especificas
+| # | H1 especifica | H0 correspondiente | Variable |
+|---|---|---|---|
+| 1 | | | |
+| 2 | | | |
+| 3 | | | |
+
+## Operacionalizacion de variables
+| Variable | Rol | Def. conceptual | Def. operacional | Escala | Instrumento |
+|---|---|---|---|---|---|
+(VD + 3 VI principales del analisis)
+
+## Clasificacion metodologica
+| Criterio | Decision | Fundamentacion |
+|---|---|---|
+| Alcance | Descriptivo/Correlacional/Explicativo | segun estado del campo |
+| Diseno | No experimental/Experimental | segun viabilidad etica |
+| Temporalidad | Transversal/Longitudinal | segun pregunta |
+| Enfoque | Cuantitativo/Mixto | segun variables |
+
+## Parametros estadisticos
+- **Nivel de significancia:** alpha = 0.05 (bilateral)
+- **Potencia estadistica:** 0.80
+- **Tamano de efecto esperado:** segun literatura previa`
+  },
+  { id:'ga', cls:'ga-card', icon:'ti-presentation', name:'Kimi AI', desc:'Presentacion cientifica',
+    system:`Experto en comunicacion cientifica. Guion de presentacion academica sobre EL TEMA DE INVESTIGACION. Audiencia universitaria. Español. Sin texto introductorio.
+
+## Ficha
+Tema: [del analisis] | Duracion: 15 min | Audiencia: estudiantes y docentes universitarios
+
+## Slide 1 -- Portada
+**Titulo formal del tema** | Subtitulo: Revision de evidencia cientifica | Equipo: 2 integrantes
+*Nota del expositor:* Presentar el tema y su relevancia actual en 20 seg.
+
+## Slide 2 -- El problema en cifras
+3 estadisticas de alto impacto del analisis con sus fuentes [Autor, Año].
+*Nota (1 min):* Abrir con el dato mas impactante. Conectar con realidad local.
+
+## Slide 3 -- Estado del conocimiento
+Mapa: 3 ejes tematicos + autores y journals clave de cada eje.
+*Nota (2 min):* Como se estructura el conocimiento. Señalar journals mas citados del campo.
+
+## Slide 4 -- Evidencia consolidada
+Los 5 hallazgos clave del analisis con citas [Autor, Año, Journal].
+*Nota (2 min):* Por cada hallazgo: dato + significado + implicacion practica.
+
+## Slide 5 -- Contexto regional
+Datos latinoamericanos vs. globales. Cifras comparativas con fuentes.
+*Nota (1.5 min):* Conectar cifras globales con realidad latinoamericana.
+
+## Slide 6 -- Analisis cuantitativo
+Grafica de factores de impacto + correlaciones principales.
+*Nota (2 min):* Que variable predice mas. Señalar correlacion mas fuerte y que significa.
+
+## Slide 7 -- Pregunta e hipotesis
+Pregunta central de investigacion + H1 principal + diseno metodologico propuesto.
+*Nota (1.5 min):* "A partir de esta evidencia, proponemos investigar..."
+
+## Slide 8 -- Diseno metodologico
+| Elemento | Decision | Justificacion bibliografica |
+|---|---|---|
+Enfoque | | | Diseno | | | Muestra | | | Instrumento | | | Analisis | |
+*Nota (1 min):* Justificar cada decision con la literatura revisada.
+
+## Slide 9 -- Vacios y proyeccion
+3 brechas identificadas + linea de investigacion futura concreta.
+*Nota (1 min):* "Lo que aun no sabemos y por que importa investigarlo."
+
+## Slide 10 -- Conclusiones
+3 conclusiones basadas en evidencia + implicacion practica de cada una.
+*Nota (1 min):* Cierre citando al autor mas relevante del campo.
+
+## Slide 11 -- Referencias (APA 7)
+8 referencias reales del analisis en formato APA 7 exacto.
+*Nota:* Visible durante preguntas.
+
+## Preguntas anticipadas del jurado
+| Pregunta | Respuesta preparada |
+|---|---|
+| Como validaron las fuentes? | estrategia concreta |
+| Por que este diseno? | justificacion metodologica |
+| Limitaciones de esta revision? | respuesta honesta |
+| Aplicacion practica? | respuesta contextualizada |
+| Que sigue? | proyeccion de investigacion |`
+  }
+]
 
 var state1 = {rr:'pending',px:'pending',ju:'pending'};
 var state2 = {je:'pending',hy:'pending',ga:'pending'};
@@ -504,7 +726,7 @@ function addKimiButton(cardId, mdText) {
   btn.innerHTML = '<i class="ti ti-external-link" style="font-size:13px"></i> Abrir en Kimi AI con este contenido';
   btn.onclick = function() {
     navigator.clipboard.writeText(mdText).then(function(){
-      showToast('Contenido copiado — pégalo en Kimi AI', '#06b6d4');
+      showToast('Contenido copiado -- pégalo en Kimi AI', '#06b6d4');
       setTimeout(function(){ window.open('https://kimi.ai','_blank'); }, 800);
     }).catch(function(){
       window.open('https://kimi.ai','_blank');
@@ -628,7 +850,7 @@ async function startStage2() {
   var res = document.getElementById('results');
 
   var div2 = document.createElement('div');
-  div2.innerHTML='<div class="section-divider"><div class="section-divider-line"></div><div class="section-divider-badge stage2-badge"><i class="ti ti-sparkles" style="font-size:12px"></i> Etapa 2 — Producción Académica</div><div class="section-divider-line"></div></div>'+
+  div2.innerHTML='<div class="section-divider"><div class="section-divider-line"></div><div class="section-divider-badge stage2-badge"><i class="ti ti-sparkles" style="font-size:12px"></i> Etapa 2 -- Documento e Investigación Formal</div><div class="section-divider-line"></div></div>'+
     STAGE2.map(function(c){return makeCardHTML(c);}).join('');
   res.appendChild(div2);
 
@@ -643,7 +865,7 @@ async function startStage2() {
     setProgress(5 + completed2*30, 2);
     if (completed2 === 3) {
       setProgress(100, 2);
-      showToast('Pipeline completo — 6 herramientas listas', '#14A39A');
+      showToast('Pipeline completo -- 6 herramientas listas', '#14A39A');
     }
   }
 
@@ -672,11 +894,11 @@ async function startResearch() {
 
   var res=document.getElementById('results');
   res.innerHTML='<div class="topic-tag"><i class="ti ti-tag" style="font-size:12px;vertical-align:-1px"></i> '+topic+'</div>'+
-    '<div class="section-divider"><div class="section-divider-line"></div><div class="section-divider-badge stage1-badge"><i class="ti ti-search" style="font-size:12px"></i> Etapa 1 — Análisis del Campo</div><div class="section-divider-line"></div></div>'+
+    '<div class="section-divider"><div class="section-divider-line"></div><div class="section-divider-badge stage1-badge"><i class="ti ti-search" style="font-size:12px"></i> Etapa 1 -- Revisión de Evidencia Científica</div><div class="section-divider-line"></div></div>'+
     STAGE1.map(function(c){return makeCardHTML(c);}).join('')+
     '<div class="stage2-trigger" id="stage2Trigger">'+
       '<div class="stage2-info">'+
-        '<h3><i class="ti ti-sparkles" style="font-size:14px;vertical-align:-1px;margin-right:5px;color:#2DD4BF"></i>Análisis listo — genera tu documento e informe</h3>'+
+        '<h3><i class="ti ti-sparkles" style="font-size:14px;vertical-align:-1px;margin-right:5px;color:#2DD4BF"></i>Análisis listo -- genera tu documento e informe</h3>'+
         '<p>Con los hallazgos de la Etapa 1 se generará un informe investigativo en Markdown descargable y el contenido para tu presentación en Kimi.</p>'+
       '</div>'+
       '<button class="stage2-btn" id="stage2TriggerBtn" onclick="startStage2()">'+
@@ -686,7 +908,7 @@ async function startResearch() {
 
   setProgress(5,1);
 
-  // Track completions directly — no interval race condition
+  // Track completions directly -- no interval race condition
   var completed1 = 0;
   function onCard1Done() {
     completed1++;
