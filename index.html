@@ -304,7 +304,11 @@ body{font-family:'Inter',system-ui,-apple-system,sans-serif;background:var(--bg)
 <div class="api-banner" id="apiBanner">
   <i class="ti ti-key icon"></i>
   <div class="api-banner-text">
-    <strong>Configura tu API Key de Anthropic</strong> — Obtén tu clave en <strong>console.anthropic.com</strong> → API Keys.
+    <strong>Configura tu API Key de Anthropic</strong> — Obtén tu clave gratis en <strong>console.anthropic.com</strong> → API Keys.
+    <div style="font-size:11.5px;color:rgba(143,181,178,.6);margin-top:4px;margin-bottom:8px">
+      <i class="ti ti-shield-check" style="font-size:12px;vertical-align:-1px"></i>
+      Funciona en iOS, Android y desktop — conexión segura vía proxy UAM.
+    </div>
     <div class="api-key-wrap">
       <input type="password" id="apiKeyInput" placeholder="sk-ant-api03-..." autocomplete="off"/>
       <button class="save-key-btn" onclick="saveKey()"><i class="ti ti-check"></i> Guardar</button>
@@ -330,11 +334,13 @@ body{font-family:'Inter',system-ui,-apple-system,sans-serif;background:var(--bg)
 
 <script>
 var API_KEY = localStorage.getItem('anthropic_key') || '';
+var PROXY_URL = 'https://uam.jesandoval.workers.dev';
 
 // Detect file:// protocol (blocks CORS on iOS Safari)
 if (location.protocol === 'file:') {
   document.getElementById('iosWarn').style.display = 'block';
 }
+
 var globalResults = {rr:'', px:'', ju:''};
 var currentTopic = '';
 
@@ -473,11 +479,11 @@ function addCopyButton(cardId) {
 
 async function callClaude(system, userMsg, maxTok) {
   if (!API_KEY) throw new Error('NO_KEY');
-  var r = await fetch('https://api.anthropic.com/v1/messages',{
+  var r = await fetch(PROXY_URL,{
     method:'POST',
     mode:'cors',
     credentials:'omit',
-    headers:{'Content-Type':'application/json','x-api-key':API_KEY,'anthropic-version':'2023-06-01','anthropic-dangerous-direct-browser-access':'true'},
+    headers:{'Content-Type':'application/json','x-api-key':API_KEY,'anthropic-version':'2023-06-01'},
     body:JSON.stringify({model:'claude-sonnet-4-6',max_tokens:maxTok||1200,system:system,messages:[{role:'user',content:userMsg}]})
   });
   var d=await r.json();
