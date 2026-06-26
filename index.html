@@ -403,6 +403,9 @@ var state1 = {rr:'pending',px:'pending',ju:'pending'};
 var state2 = {je:'pending',hy:'pending',ga:'pending'};
 
 function setStatus(id, s) {
+  // Update state objects so interval counters detect completion correctly
+  if (state1 && id in state1) state1[id] = s;
+  if (state2 && id in state2) state2[id] = s;
   var el = document.getElementById('status-'+id);
   if (!el) return;
   var map = {pending:['pending','Pendiente'],loading:['loading',''],done:['done','Listo'],error:['error','Error']};
@@ -548,6 +551,9 @@ async function runCard1(card, topic) {
     mdEl.style.display='block';
     setStatus(card.id,'error');
   }
+  // Safety check: trigger stage2 immediately if all 3 done
+  var done1=Object.values(state1).filter(function(s){return s==='done'||s==='error';}).length;
+  if(done1===3) showStage2Trigger();
 }
 
 async function runCard2(card, topic, context) {
