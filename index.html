@@ -7,7 +7,7 @@
 <meta name="theme-color" content="#F0F7F6" media="(prefers-color-scheme: light)">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-<title>Hub de Investigación IA v2 — Actividad 3</title>
+<title>Hub de Investigación IA v3 — Actividad 3</title>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap" rel="stylesheet" crossorigin>
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@2.44.0/tabler-icons.min.css">
 <style>
@@ -27,13 +27,13 @@
   --input-bg:  #1A2B2A;
   --input-bdr: #2A4543;
   --divider:   rgba(31,58,56,.9);
-  /* tool accents — desaturated to blend with teal */
   --rr: #2DD4BF; --rr-bg: rgba(45,212,191,.08); --rr-bdr: rgba(45,212,191,.22);
   --px: #D4A843; --px-bg: rgba(212,168,67,.08);  --px-bdr: rgba(212,168,67,.22);
   --ju: #E07060; --ju-bg: rgba(224,112,96,.08);  --ju-bdr: rgba(224,112,96,.22);
   --je: #8B7EC8; --je-bg: rgba(139,126,200,.08); --je-bdr: rgba(139,126,200,.22);
   --hy: #5BA3B0; --hy-bg: rgba(91,163,176,.08);  --hy-bdr: rgba(91,163,176,.22);
   --ki: #20B8C4; --ki-bg: rgba(32,184,196,.08);  --ki-bdr: rgba(32,184,196,.22);
+  --rt: #38BDF8; --rt-bg: rgba(56,189,248,.08);  --rt-bdr: rgba(56,189,248,.22);
 }
 
 /* ── RESET & BASE ─────────────────────────────────────────── */
@@ -72,6 +72,17 @@ body{font-family:'Inter',system-ui,-apple-system,sans-serif;background:var(--bg)
 .tool-name{font-size:10.5px;font-weight:600;color:var(--text);display:block;line-height:1.2}
 .tool-role{font-size:9px;color:var(--text2);display:block;margin-top:1px}
 
+/* ── COMPARE MODE TOGGLE ──────────────────────────────────── */
+.compare-toggle-row{display:flex;align-items:center;gap:10px;margin-bottom:.75rem}
+.compare-toggle-label{font-size:12px;color:var(--text2);display:flex;align-items:center;gap:6px;cursor:pointer;user-select:none}
+.toggle-track{position:relative;width:30px;height:17px;background:rgba(143,181,178,.18);border-radius:9px;transition:background .2s;display:inline-block;flex-shrink:0}
+.toggle-track.on{background:var(--teal)}
+.toggle-knob{position:absolute;top:2px;left:2px;width:13px;height:13px;background:#fff;border-radius:50%;transition:transform .2s;pointer-events:none}
+.toggle-track.on .toggle-knob{transform:translateX(13px)}
+.compare-input-row{display:none;gap:9px;align-items:center;margin-bottom:.875rem;animation:fadeIn .25s ease}
+.compare-input-row.visible{display:flex}
+.compare-vs-badge{font-size:11px;font-weight:600;color:var(--eyebrow);padding:3px 9px;background:var(--teal-dim);border-radius:99px;border:1px solid rgba(20,163,154,.3);white-space:nowrap}
+
 /* ── SEARCH ───────────────────────────────────────────────── */
 .search-wrap{display:flex;gap:9px;align-items:stretch}
 .search-wrap input{flex:1;min-width:0;border-radius:10px;border:1px solid var(--input-bdr);padding:11px 14px;font-size:14px;background:var(--input-bg);color:var(--text);outline:none;font-family:inherit;transition:border-color .15s,box-shadow .15s;-webkit-appearance:none}
@@ -81,22 +92,27 @@ body{font-family:'Inter',system-ui,-apple-system,sans-serif;background:var(--bg)
 .run-btn:hover{background:var(--teal-hover)}.run-btn:active{transform:scale(.97);background:var(--teal-dark)}
 .run-btn:disabled{background:#1F3A38;color:#4A7570;cursor:not-allowed;transform:none}
 
+/* ── HISTORY BAR ──────────────────────────────────────────── */
+.history-bar{display:none;gap:6px;margin-bottom:.875rem;flex-wrap:wrap;align-items:center}
+.history-bar.visible{display:flex}
+.history-label{font-size:10.5px;color:var(--text2);opacity:.6;flex-shrink:0}
+.history-chip{display:inline-flex;align-items:center;gap:5px;background:var(--teal-dim);border:1px solid rgba(20,163,154,.22);border-radius:99px;padding:3px 10px 3px 8px;font-size:11.5px;color:var(--eyebrow);cursor:pointer;transition:background .15s;max-width:160px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.history-chip:hover{background:rgba(20,163,154,.15)}
+.history-chip-del{margin-left:2px;opacity:.5;font-size:12px;cursor:pointer;flex-shrink:0;transition:opacity .15s}
+.history-chip-del:hover{opacity:1}
+
 /* ── PROGRESS ─────────────────────────────────────────────── */
 .progress-bar{height:3px;background:rgba(20,163,154,.12);border-radius:99px;margin-top:.875rem;overflow:hidden;display:none}
 .progress-fill{height:100%;width:0;border-radius:99px;transition:width .5s ease}
 .progress-fill.stage1{background:linear-gradient(90deg,var(--rr),var(--teal),var(--ju))}
 .progress-fill.stage2{background:linear-gradient(90deg,var(--je),var(--teal),var(--ki))}
 
-/* ── API BANNER ───────────────────────────────────────────── */
-.api-banner{background:rgba(212,168,67,.06);border:1px solid rgba(212,168,67,.2);border-radius:12px;padding:.875rem 1.125rem;margin-bottom:1.125rem;display:flex;align-items:flex-start;gap:10px}
-.api-banner i.icon{color:var(--px);font-size:18px;margin-top:1px;flex-shrink:0}
-.api-banner-text{font-size:13px;color:var(--text2);line-height:1.6;flex:1}
-.api-banner-text strong{color:#D4A843;font-weight:600}
-.api-key-wrap{display:flex;gap:7px;margin-top:8px;flex-wrap:wrap}
-.api-key-wrap input{flex:1;min-width:180px;background:var(--input-bg);border:1px solid rgba(212,168,67,.25);border-radius:8px;padding:8px 12px;font-size:13px;color:var(--text);outline:none;font-family:monospace;-webkit-appearance:none}
-.api-key-wrap input:focus{border-color:var(--px);box-shadow:0 0 0 2px rgba(212,168,67,.12)}
-.save-key-btn{background:rgba(212,168,67,.1);color:#D4A843;border:1px solid rgba(212,168,67,.25);border-radius:8px;padding:8px 13px;font-size:13px;font-weight:500;cursor:pointer;white-space:nowrap;font-family:inherit;touch-action:manipulation}
-.save-key-btn:hover{background:rgba(212,168,67,.2)}
+/* ── VERIFICATION BANNER ──────────────────────────────────── */
+.verify-banner{background:rgba(212,168,67,.07);border:1px solid rgba(212,168,67,.28);border-radius:12px;padding:.875rem 1.125rem;margin-bottom:1rem;display:flex;align-items:flex-start;gap:10px}
+.verify-banner i{color:var(--px);font-size:18px;margin-top:1px;flex-shrink:0}
+.verify-banner-text{font-size:12.5px;color:var(--text2);line-height:1.65;flex:1}
+.verify-banner-text strong{color:#D4A843;font-weight:600}
+.verify-banner-text a{color:#D4A843;text-decoration:underline;text-underline-offset:2px}
 
 /* ── SECTION DIVIDER ──────────────────────────────────────── */
 .section-divider{display:flex;align-items:center;gap:10px;margin:1.375rem 0 .875rem}
@@ -104,6 +120,7 @@ body{font-family:'Inter',system-ui,-apple-system,sans-serif;background:var(--bg)
 .section-divider-badge{display:flex;align-items:center;gap:6px;padding:4px 13px;border-radius:99px;font-size:11.5px;font-weight:600;white-space:nowrap;border:1px solid}
 .stage1-badge{background:var(--teal-dim);color:var(--eyebrow);border-color:rgba(20,163,154,.3)}
 .stage2-badge{background:var(--je-bg);color:var(--je);border-color:var(--je-bdr)}
+.compare-badge{background:rgba(56,189,248,.08);color:var(--rt);border-color:var(--rt-bdr)}
 
 /* ── STAGE 2 TRIGGER ──────────────────────────────────────── */
 .stage2-trigger{background:linear-gradient(135deg,rgba(20,163,154,.08),rgba(91,163,176,.06));border:1px solid rgba(20,163,154,.25);border-radius:14px;padding:1.125rem 1.375rem;display:none;align-items:center;gap:14px;margin-bottom:.875rem;flex-wrap:wrap}
@@ -116,6 +133,7 @@ body{font-family:'Inter',system-ui,-apple-system,sans-serif;background:var(--bg)
 
 /* ── RESULT CARDS ─────────────────────────────────────────── */
 .results{display:flex;flex-direction:column;gap:.8rem}
+.compare-cols{display:grid;grid-template-columns:1fr 1fr;gap:.8rem}
 .result-card{border-radius:14px;border:1px solid var(--card-border);overflow:hidden;background:var(--card);transition:border-color .2s}
 .result-card:hover{border-color:rgba(20,163,154,.3)}
 .result-card.rr-card{--accent:var(--rr);--accent-bg:var(--rr-bg)}
@@ -124,6 +142,7 @@ body{font-family:'Inter',system-ui,-apple-system,sans-serif;background:var(--bg)
 .result-card.je-card{--accent:var(--je);--accent-bg:var(--je-bg)}
 .result-card.hy-card{--accent:var(--hy);--accent-bg:var(--hy-bg)}
 .result-card.ga-card{--accent:var(--ki);--accent-bg:var(--ki-bg)}
+.result-card.rt-card{--accent:var(--rt);--accent-bg:var(--rt-bg)}
 .card-header{display:flex;align-items:center;gap:11px;padding:13px 15px;cursor:pointer;user-select:none;transition:background .15s;-webkit-tap-highlight-color:transparent}
 .card-header:active{background:rgba(20,163,154,.04)}
 .tool-icon{width:36px;height:36px;border-radius:9px;display:flex;align-items:center;justify-content:center;font-size:16px;flex-shrink:0;background:var(--accent-bg);color:var(--accent)}
@@ -139,6 +158,14 @@ body{font-family:'Inter',system-ui,-apple-system,sans-serif;background:var(--bg)
 .chevron.open{transform:rotate(180deg)}
 .card-body{display:none;border-top:1px solid var(--divider)}
 .card-body.open{display:block}
+
+/* ── COUNTDOWN BADGE ──────────────────────────────────────── */
+.countdown-wrap{display:flex;align-items:center;gap:10px;padding:10px 15px;background:rgba(20,163,154,.05);border-bottom:1px solid var(--divider)}
+.countdown-arc{position:relative;width:28px;height:28px;flex-shrink:0}
+.countdown-arc svg{position:absolute;top:0;left:0;transform:rotate(-90deg)}
+.countdown-num{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;font-size:10px;font-weight:600;color:var(--eyebrow)}
+.countdown-msg{font-size:12px;color:var(--text2);line-height:1.4}
+.countdown-msg strong{color:var(--eyebrow)}
 
 /* ── SKELETON ─────────────────────────────────────────────── */
 .skeleton-wrap{padding:16px}
@@ -159,7 +186,14 @@ body{font-family:'Inter',system-ui,-apple-system,sans-serif;background:var(--bg)
 .md-content code{background:rgba(20,163,154,.1);padding:1px 6px;border-radius:4px;font-family:monospace;font-size:12px;color:var(--eyebrow)}
 .md-content blockquote{border-left:3px solid var(--accent);padding:6px 12px;color:var(--text2);margin:8px 0;background:rgba(20,163,154,.04);border-radius:0 6px 6px 0}
 .md-content hr{border:none;border-top:1px solid var(--divider);margin:10px 0}
-.cite-chip{display:inline-flex;align-items:center;gap:3px;background:rgba(20,163,154,.1);border:1px solid rgba(20,163,154,.22);border-radius:5px;padding:1px 7px;font-size:11px;color:var(--eyebrow);margin:1px 2px;font-style:italic;vertical-align:middle}
+.md-content li{margin-bottom:4px}
+
+/* ── CITE CHIPS WITH SCHOLAR BUTTON ──────────────────────── */
+.cite-group{display:inline-flex;align-items:center;gap:2px;margin:1px 2px;vertical-align:middle}
+.cite-chip{display:inline-flex;align-items:center;gap:3px;background:rgba(20,163,154,.1);border:1px solid rgba(20,163,154,.22);border-radius:5px 0 0 5px;padding:1px 7px;font-size:11px;color:var(--eyebrow);font-style:italic}
+.cite-scholar{display:inline-flex;align-items:center;justify-content:center;background:rgba(212,168,67,.12);border:1px solid rgba(212,168,67,.25);border-left:none;border-radius:0 5px 5px 0;padding:1px 5px;cursor:pointer;transition:background .15s;text-decoration:none}
+.cite-scholar:hover{background:rgba(212,168,67,.22)}
+.cite-scholar i{font-size:10px;color:var(--px)}
 
 /* ── CHARTS ───────────────────────────────────────────────── */
 .chart-wrap{margin:4px 15px 15px;background:rgba(20,163,154,.04);border-radius:10px;padding:13px;border:1px solid var(--divider)}
@@ -170,9 +204,27 @@ body{font-family:'Inter',system-ui,-apple-system,sans-serif;background:var(--bg)
 .bar-fill{height:100%;border-radius:99px;transition:width 1s cubic-bezier(.34,1.3,.64,1)}
 .bar-val{font-size:11px;color:rgba(143,181,178,.5);width:30px;flex-shrink:0}
 
-/* ── COPY BUTTON ──────────────────────────────────────────── */
-.copy-btn{display:inline-flex;align-items:center;gap:5px;background:var(--teal-dim);border:1px solid rgba(20,163,154,.2);color:var(--text2);border-radius:7px;padding:5px 10px;font-size:11.5px;cursor:pointer;font-family:inherit;transition:all .15s;margin:0 15px 13px;touch-action:manipulation}
-.copy-btn:hover{background:rgba(20,163,154,.15);color:var(--text)}
+/* ── ACTION BUTTONS ROW ───────────────────────────────────── */
+.action-btns{display:flex;flex-wrap:wrap;gap:6px;padding:0 15px 13px}
+.act-btn{display:inline-flex;align-items:center;gap:5px;border-radius:7px;padding:5px 10px;font-size:11.5px;cursor:pointer;font-family:inherit;transition:all .15s;border:1px solid;touch-action:manipulation;text-decoration:none;white-space:nowrap}
+.act-btn-copy{background:var(--teal-dim);border-color:rgba(20,163,154,.2);color:var(--text2)}
+.act-btn-copy:hover{background:rgba(20,163,154,.15);color:var(--text)}
+.act-btn-dl{background:var(--teal-dim);border-color:rgba(20,163,154,.35);color:var(--eyebrow)}
+.act-btn-dl:hover{background:rgba(20,163,154,.15)}
+.act-btn-apa{background:rgba(139,126,200,.08);border-color:rgba(139,126,200,.28);color:var(--je)}
+.act-btn-apa:hover{background:rgba(139,126,200,.15)}
+.act-btn-bib{background:rgba(91,163,176,.08);border-color:rgba(91,163,176,.28);color:var(--hy)}
+.act-btn-bib:hover{background:rgba(91,163,176,.15)}
+.act-btn-kimi{background:rgba(6,182,212,.08);border-color:rgba(6,182,212,.25);color:#06b6d4}
+.act-btn-kimi:hover{background:rgba(6,182,212,.15)}
+
+/* ── ROADMAP CARD ─────────────────────────────────────────── */
+.roadmap-grid{padding:15px;display:flex;flex-direction:column;gap:10px}
+.roadmap-item{display:flex;gap:12px;align-items:flex-start;background:rgba(20,163,154,.04);border:1px solid var(--divider);border-radius:10px;padding:10px 13px}
+.roadmap-icon{width:30px;height:30px;border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:14px;flex-shrink:0}
+.roadmap-text h4{font-size:13px;font-weight:600;color:var(--text);margin-bottom:2px}
+.roadmap-text p{font-size:12px;color:var(--text2);line-height:1.5;margin:0}
+.roadmap-text a{color:var(--eyebrow);text-decoration:underline;text-underline-offset:2px}
 
 /* ── MISC ─────────────────────────────────────────────────── */
 .topic-tag{display:inline-flex;align-items:center;gap:6px;background:var(--teal-dim);color:var(--eyebrow);border-radius:8px;padding:5px 12px;font-size:13px;font-weight:500;margin-bottom:.875rem;border:1px solid rgba(20,163,154,.25)}
@@ -183,6 +235,7 @@ body{font-family:'Inter',system-ui,-apple-system,sans-serif;background:var(--bg)
 .toast{position:fixed;bottom:max(24px,env(safe-area-inset-bottom,24px));right:16px;background:var(--teal);color:#fff;padding:10px 18px;border-radius:10px;font-size:13px;font-weight:500;z-index:9999;transition:opacity .3s;box-shadow:0 4px 20px rgba(20,163,154,.35)}
 .footer{text-align:center;margin-top:2rem;font-size:11px;color:rgba(143,181,178,.35);padding-bottom:1.5rem;line-height:1.9}
 .footer strong{color:rgba(143,181,178,.55)}
+@keyframes fadeIn{from{opacity:0;transform:translateY(-4px)}to{opacity:1;transform:translateY(0)}}
 
 /* FLOATING STAGE 2 BUTTON */
 .fab-stage2{position:fixed;bottom:max(24px,env(safe-area-inset-bottom,24px));left:50%;transform:translateX(-50%);background:var(--teal);color:#fff;border:none;border-radius:99px;padding:13px 24px;font-size:14px;font-weight:600;cursor:pointer;display:none;align-items:center;gap:8px;font-family:inherit;box-shadow:0 4px 20px rgba(20,163,154,.45);z-index:999;white-space:nowrap;transition:background .15s,transform .15s,opacity .2s;animation:fabIn .3s ease}
@@ -206,64 +259,35 @@ body{font-family:'Inter',system-ui,-apple-system,sans-serif;background:var(--bg)
     --ju:#C05545;--ju-bg:rgba(192,85,69,.07);--ju-bdr:rgba(192,85,69,.25);
     --je:#6B5EA8;--je-bg:rgba(107,94,168,.07);--je-bdr:rgba(107,94,168,.25);
     --hy:#3A7F8C;--hy-bg:rgba(58,127,140,.07);--hy-bdr:rgba(58,127,140,.25);
-    --ki:#0F8F9A;--ki-bg:rgba(15,143,154,.07);--ki-bdr:rgba(15,143,154,.25);
+    --ki:#0F8F9A;--ki-bg:rgba(15,143,154,.07);--ki-bdr:rgba(15,143,154,.22);
+    --rt:#0284C7;--rt-bg:rgba(2,132,199,.07);--rt-bdr:rgba(2,132,199,.25);
   }
   .hero{background:linear-gradient(135deg,#E0F2F0 0%,#F0FAF9 55%,#E8F7F5 100%);border-color:var(--card-border)}
-  .hero::before{background:radial-gradient(circle,rgba(11,122,115,.1) 0%,transparent 70%)}
   body{background:var(--bg)}
   .result-card{background:var(--card)}
-  .card-header:active{background:rgba(11,122,115,.04)}
-  .md-content code{background:rgba(11,122,115,.08);color:var(--teal)}
-  .md-content blockquote{background:rgba(11,122,115,.04)}
-  .chart-wrap{background:rgba(11,122,115,.04)}
-  .bar-track{background:rgba(11,122,115,.1)}
-  .api-banner{background:rgba(184,135,42,.06);border-color:rgba(184,135,42,.25)}
-  .skeleton-line{background:rgba(11,122,115,.07)}
-  .toast{background:var(--teal)}
 }
 
-/* ── MOBILE RESPONSIVE ────────────────────────────────────── */
+/* ── MOBILE ───────────────────────────────────────────────── */
 @media(max-width:480px){
   body{padding:1rem .75rem}
   .hero{padding:1.375rem 1.125rem 1.25rem;border-radius:14px}
   .hero-title{font-size:16.5px}
-  .hero-eyebrow{font-size:9.5px;letter-spacing:2px}
-  .hero-sub{font-size:12px;margin-bottom:1.125rem}
-  .stages-header{gap:6px}
-  .stage-pill{font-size:10.5px;padding:4px 9px}
   .tools-row{gap:5px}
   .tool-badge{min-width:calc(33.33% - 4px);padding:8px 5px}
   .tool-name{font-size:9.5px}.tool-role{font-size:8.5px}
-  .tool-dot{width:6px;height:6px}
   .search-wrap{flex-direction:column;gap:8px}
-  .search-wrap input{width:100%;font-size:16px} /* 16px prevents iOS zoom */
+  .search-wrap input{width:100%;font-size:16px}
   .run-btn{width:100%;justify-content:center;padding:13px}
-  .hero-title{font-size:17px}
+  .compare-input-row{flex-direction:column;gap:7px}
   .card-header{padding:12px 13px;gap:10px}
-  .card-tool-name{font-size:13px}
-  .card-tool-desc{font-size:10.5px}
   .md-content{padding:13px;font-size:13px}
   .bar-label{width:100px;font-size:10.5px}
-  .chart-wrap{margin:4px 13px 13px;padding:11px}
-  .stage2-trigger{padding:1rem 1.125rem}
-  .stage2-btn{width:100%}
-  .api-key-wrap{flex-direction:column}
-  .api-key-wrap input{min-width:unset;width:100%}
-  .save-key-btn{width:100%;text-align:center;justify-content:center;display:flex;align-items:center;gap:6px}
-  .section-divider-badge{font-size:10.5px;padding:4px 10px}
+  .compare-cols{grid-template-columns:1fr}
+  .action-btns{gap:5px}
   .toast{left:16px;right:16px;text-align:center}
 }
-
-@media(max-width:360px){
-  .tool-badge{min-width:calc(50% - 3px)}
-  .hero-title{font-size:15.5px}
-}
-
-@media(min-width:481px) and (max-width:680px){
-  .search-wrap{flex-direction:column;gap:8px}
-  .search-wrap input{font-size:16px}
-  .run-btn{width:100%;justify-content:center}
-  .tool-badge{min-width:calc(33.33% - 5px)}
+@media(max-width:680px){
+  .compare-cols{grid-template-columns:1fr}
 }
 </style>
 </head>
@@ -274,14 +298,14 @@ body{font-family:'Inter',system-ui,-apple-system,sans-serif;background:var(--bg)
 <div id="iosWarn" style="display:none;background:rgba(192,85,69,.1);border:1px solid rgba(192,85,69,.35);border-radius:12px;padding:.875rem 1.125rem;margin-bottom:1rem;font-size:13px;color:#E07060;line-height:1.6">
   <strong style="display:block;margin-bottom:4px">⚠️ Abre esto desde un servidor HTTPS</strong>
   Estás abriendo el archivo localmente (<code style="font-size:11px;background:rgba(192,85,69,.15);padding:1px 5px;border-radius:3px">file://</code>). Safari iOS bloquea llamadas a APIs externas por seguridad.<br><br>
-  <strong>Solución rápida:</strong> Sube el archivo a <a href="https://netlify.com/drop" target="_blank" style="color:#E07060;text-decoration:underline">netlify.com/drop</a> (gratis, 30 seg) y ábrelo desde la URL que te dan.
+  <strong>Solución:</strong> Sube el archivo a <a href="https://netlify.com/drop" target="_blank" style="color:#E07060;text-decoration:underline">netlify.com/drop</a> o usa GitHub Pages.
 </div>
 
 <!-- HERO -->
 <div class="hero">
   <div class="hero-eyebrow">Actividad 3 · Ph.D. Carlos Alexander · Metodología de la Investigación</div>
   <div class="hero-title">Herramientas de IA para Ciencias de Datos e Investigación</div>
-  <div class="hero-sub">Explora cualquier tema en profundidad — literatura validada, evidencia con fuentes y análisis de datos</div>
+  <div class="hero-sub">Explora cualquier tema — literatura validada, evidencia con fuentes y análisis de datos</div>
 
   <div class="stages-header">
     <div class="stage-pill active" id="pill1"><i class="ti ti-search" style="font-size:11px"></i> Etapa 1: Análisis del campo</div>
@@ -298,26 +322,32 @@ body{font-family:'Inter',system-ui,-apple-system,sans-serif;background:var(--bg)
     <div class="tool-badge ga"><span class="tool-dot"></span><span class="tool-name">Kimi AI</span><span class="tool-role">Presentación</span></div>
   </div>
 
+  <!-- HISTORIAL -->
+  <div class="history-bar" id="historyBar">
+    <span class="history-label"><i class="ti ti-history" style="font-size:11px;vertical-align:-1px"></i> Recientes:</span>
+    <div id="historyChips"></div>
+  </div>
+
+  <!-- MODO COMPARACIÓN -->
+  <div class="compare-toggle-row">
+    <label class="compare-toggle-label" onclick="toggleCompareMode()">
+      <span class="toggle-track" id="compareTgl"><span class="toggle-knob"></span></span>
+      Modo comparación — investigar dos temas en paralelo
+    </label>
+  </div>
+  <div class="compare-input-row" id="compareInputRow">
+    <span class="compare-vs-badge">Tema A</span>
+    <input type="text" id="topicInputB" placeholder="Segundo tema a comparar..." style="flex:1;min-width:0;border-radius:10px;border:1px solid var(--input-bdr);padding:10px 13px;font-size:14px;background:var(--input-bg);color:var(--text);outline:none;font-family:inherit" />
+  </div>
+
   <div class="search-wrap">
     <input type="text" id="topicInput" placeholder="Escribe el tema de tu investigación aquí..." />
     <button class="run-btn" id="runBtn" onclick="startResearch()">
-      <i class="ti ti-telescope"></i>Investigar
+      <i class="ti ti-telescope"></i><span id="runBtnLabel">Investigar</span>
     </button>
   </div>
   <div class="progress-bar" id="progressBar">
     <div class="progress-fill stage1" id="progressFill"></div>
-  </div>
-</div>
-
-<!-- ESTADO DEL PROXY (sin input de API Key: la clave vive solo en el servidor) -->
-<div class="api-banner" id="apiBanner" style="display:none">
-  <i class="ti ti-alert-triangle icon"></i>
-  <div class="api-banner-text">
-    <strong>El servicio no está disponible</strong> — no se pudo conectar con el proxy.
-    <div style="font-size:11.5px;color:rgba(143,181,178,.6);margin-top:4px">
-      <i class="ti ti-shield-check" style="font-size:12px;vertical-align:-1px"></i>
-      Intenta de nuevo en unos segundos. Si el problema persiste, contacta al administrador del hub.
-    </div>
   </div>
 </div>
 
@@ -337,7 +367,7 @@ body{font-family:'Inter',system-ui,-apple-system,sans-serif;background:var(--bg)
 </button>
 
 <div class="footer">
-  <strong>Hub de Investigación Científica</strong> — Revisión de evidencia en 6 etapas<br>
+  <strong>Hub de Investigación Científica v3</strong> — Revisión de evidencia en 6 etapas + Hoja de Ruta<br>
   Research Rabbit · Perplexity AI · Julius AI · Jenni AI · Hypothesis Engine · Kimi AI<br>
   Powered by Claude API (Anthropic) · Actividad 3 · Equipo 2 integrantes
 </div>
@@ -346,14 +376,65 @@ body{font-family:'Inter',system-ui,-apple-system,sans-serif;background:var(--bg)
 <script>
 var PROXY_URL = 'https://uam.jesandoval.workers.dev';
 
-// Detect file:// protocol (blocks CORS on iOS Safari)
 if (location.protocol === 'file:') {
   document.getElementById('iosWarn').style.display = 'block';
 }
 
 var globalResults = {rr:'', px:'', ju:''};
 var currentTopic = '';
+var compareMode = false;
+var currentTopicB = '';
+var globalResultsB = {rr:'', px:'', ju:''};
 
+/* ── HISTORY ─────────────────────────────────────────────── */
+function loadHistory() {
+  try { return JSON.parse(localStorage.getItem('hub_history') || '[]'); } catch(e) { return []; }
+}
+function saveHistory(topic) {
+  var h = loadHistory().filter(function(t){ return t !== topic; });
+  h.unshift(topic);
+  h = h.slice(0, 5);
+  try { localStorage.setItem('hub_history', JSON.stringify(h)); } catch(e){}
+  renderHistory();
+}
+function deleteHistory(topic) {
+  var h = loadHistory().filter(function(t){ return t !== topic; });
+  try { localStorage.setItem('hub_history', JSON.stringify(h)); } catch(e){}
+  renderHistory();
+}
+function renderHistory() {
+  var h = loadHistory();
+  var bar = document.getElementById('historyBar');
+  var chips = document.getElementById('historyChips');
+  if (!h.length) { bar.className = 'history-bar'; return; }
+  bar.className = 'history-bar visible';
+  chips.innerHTML = h.map(function(t) {
+    var safe = t.replace(/"/g,'&quot;').replace(/</g,'&lt;');
+    return '<span class="history-chip" onclick="loadHistoryTopic(\'' + safe.replace(/'/g,"\\'") + '\')">' +
+      '<i class="ti ti-clock" style="font-size:10px"></i>' + safe.slice(0,28) + (safe.length>28?'…':'') +
+      '<span class="history-chip-del" onclick="event.stopPropagation();deleteHistory(\'' + safe.replace(/'/g,"\\'") + '\')" title="Eliminar">×</span>' +
+      '</span>';
+  }).join('');
+}
+function loadHistoryTopic(topic) {
+  document.getElementById('topicInput').value = topic;
+  document.getElementById('topicInput').focus();
+}
+
+/* ── COMPARE MODE ────────────────────────────────────────── */
+function toggleCompareMode() {
+  compareMode = !compareMode;
+  var tgl = document.getElementById('compareTgl');
+  var row = document.getElementById('compareInputRow');
+  tgl.className = 'toggle-track' + (compareMode ? ' on' : '');
+  row.className = 'compare-input-row' + (compareMode ? ' visible' : '');
+  var lbl = document.getElementById('runBtnLabel');
+  lbl.textContent = compareMode ? 'Comparar' : 'Investigar';
+  var inp = document.getElementById('topicInput');
+  inp.placeholder = compareMode ? 'Tema A (primer tema)...' : 'Escribe el tema de tu investigación aquí...';
+}
+
+/* ── TOAST ───────────────────────────────────────────────── */
 function showToast(msg, color) {
   var t = document.createElement('div');
   t.className = 'toast';
@@ -363,7 +444,38 @@ function showToast(msg, color) {
   setTimeout(function(){ t.style.opacity='0'; setTimeout(function(){ t.remove(); },300); }, 2500);
 }
 
-// ── STAGE 1: ANALYSIS TOOLS ──────────────────────────────────
+/* ── COUNTDOWN ───────────────────────────────────────────── */
+function makeCountdown(cardId, seconds, label) {
+  var body = document.getElementById('body-'+cardId);
+  if (!body) return;
+  var wrap = document.createElement('div');
+  wrap.className = 'countdown-wrap';
+  wrap.id = 'cdwrap-'+cardId;
+  var circ = 2 * Math.PI * 12;
+  wrap.innerHTML = '<div class="countdown-arc">' +
+    '<svg width="28" height="28" viewBox="0 0 28 28">' +
+    '<circle cx="14" cy="14" r="12" fill="none" stroke="rgba(20,163,154,.15)" stroke-width="2"/>' +
+    '<circle id="cdarc-'+cardId+'" cx="14" cy="14" r="12" fill="none" stroke="#14A39A" stroke-width="2" ' +
+    'stroke-dasharray="'+circ+'" stroke-dashoffset="0" stroke-linecap="round"/></svg>' +
+    '<span class="countdown-num" id="cdnum-'+cardId+'">'+seconds+'</span></div>' +
+    '<div class="countdown-msg"><strong>'+label+'</strong> — en cola '+seconds+'s para respetar el límite de tokens</div>';
+  body.insertBefore(wrap, body.firstChild);
+  var remaining = seconds;
+  var interval = setInterval(function() {
+    remaining--;
+    var el = document.getElementById('cdnum-'+cardId);
+    var arc = document.getElementById('cdarc-'+cardId);
+    if (el) el.textContent = remaining;
+    if (arc) arc.style.strokeDashoffset = circ * (1 - remaining/seconds);
+    if (remaining <= 0) {
+      clearInterval(interval);
+      var wrapEl = document.getElementById('cdwrap-'+cardId);
+      if (wrapEl) wrapEl.style.display = 'none';
+    }
+  }, 1000);
+}
+
+/* ── STAGE DEFINITIONS ───────────────────────────────────── */
 var STAGE1 = [
   { id:'rr', cls:'rr-card', icon:'ti-affiliate', name:'Research Rabbit', desc:'Literatura validada',
     system:`Asistente de mapeo de literatura científica. Español. Markdown estructurado. Sin introducción. Solo información verificable.
@@ -543,7 +655,7 @@ Descripcion del vacio de conocimiento con evidencia. Ultima linea:
 - **Tamano de efecto esperado:** segun literatura previa`
   },
   { id:'ga', cls:'ga-card', icon:'ti-presentation', name:'Kimi AI', desc:'Presentacion cientifica',
-    system:`Experto en comunicacion cientifica. Guion de presentacion academica sobre EL TEMA DE INVESTIGACION. Audiencia universitaria. Español. Sin texto introductorio.
+    system:`Experto en comunicacion cientifica. Guion de presentacion academica. Audiencia universitaria. Español. Sin texto introductorio.
 
 ## Ficha
 Tema: [del analisis] | Duracion: 15 min | Audiencia: estudiantes y docentes universitarios
@@ -558,7 +670,7 @@ Tema: [del analisis] | Duracion: 15 min | Audiencia: estudiantes y docentes univ
 
 ## Slide 3 -- Estado del conocimiento
 Mapa: 3 ejes tematicos + autores y journals clave de cada eje.
-*Nota (2 min):* Como se estructura el conocimiento. Señalar journals mas citados del campo.
+*Nota (2 min):* Señalar journals mas citados del campo.
 
 ## Slide 4 -- Evidencia consolidada
 Los 5 hallazgos clave del analisis con citas [Autor, Año, Journal].
@@ -570,49 +682,90 @@ Datos latinoamericanos vs. globales. Cifras comparativas con fuentes.
 
 ## Slide 6 -- Analisis cuantitativo
 Grafica de factores de impacto + correlaciones principales.
-*Nota (2 min):* Que variable predice mas. Señalar correlacion mas fuerte y que significa.
+*Nota (2 min):* Variable que mas predice. Correlacion mas fuerte.
 
 ## Slide 7 -- Pregunta e hipotesis
-Pregunta central de investigacion + H1 principal + diseno metodologico propuesto.
+Pregunta central + H1 principal + diseno metodologico propuesto.
 *Nota (1.5 min):* "A partir de esta evidencia, proponemos investigar..."
 
 ## Slide 8 -- Diseno metodologico
-| Elemento | Decision | Justificacion bibliografica |
-|---|---|---|
-Enfoque | | | Diseno | | | Muestra | | | Instrumento | | | Analisis | |
-*Nota (1 min):* Justificar cada decision con la literatura revisada.
+Tabla: Elemento / Decision / Justificacion bibliografica
+*Nota (1 min):* Justificar cada decision con literatura revisada.
 
 ## Slide 9 -- Vacios y proyeccion
 3 brechas identificadas + linea de investigacion futura concreta.
-*Nota (1 min):* "Lo que aun no sabemos y por que importa investigarlo."
 
 ## Slide 10 -- Conclusiones
 3 conclusiones basadas en evidencia + implicacion practica de cada una.
-*Nota (1 min):* Cierre citando al autor mas relevante del campo.
 
 ## Slide 11 -- Referencias (APA 7)
-8 referencias reales del analisis en formato APA 7 exacto.
-*Nota:* Visible durante preguntas.
+8 referencias reales en formato APA 7 exacto.
 
 ## Preguntas anticipadas del jurado
 | Pregunta | Respuesta preparada |
 |---|---|
 | Como validaron las fuentes? | estrategia concreta |
 | Por que este diseno? | justificacion metodologica |
-| Limitaciones de esta revision? | respuesta honesta |
-| Aplicacion practica? | respuesta contextualizada |
-| Que sigue? | proyeccion de investigacion |`
+| Limitaciones? | respuesta honesta |
+| Aplicacion practica? | respuesta contextualizada |`
+  },
+  { id:'rt', cls:'rt-card', icon:'ti-map-2', name:'Hoja de Ruta', desc:'Próximos pasos del investigador',
+    system:`Eres un asesor de investigación científica. Con base en el análisis previo (literatura, evidencia, datos, hipótesis), genera una hoja de ruta concreta de los próximos pasos para el investigador. Español. Sin introducción. Directo y accionable.
+
+## Siguiente paso inmediato (esta semana)
+Acción específica con plataforma o recurso concreto. Ejemplo: "Crear alerta en Google Scholar para '[termino clave]' + '[autor_principal]'"
+
+## Verificación de fuentes (prioridad alta)
+Lista los 5 papers más importantes del análisis. Para cada uno:
+- **[Apellido, Año]** — buscar en: [URL directa a Google Scholar query] | Alternativa: Semantic Scholar
+Indica cuáles son más probables de ser reales vs. posibles alucinaciones del modelo.
+
+## Datasets disponibles
+2-3 datasets públicos relevantes para el tema con URL real:
+- **[Nombre]:** descripción + fuente (Kaggle / ZENODO / datos.gob / repositorio institucional)
+
+## Convocatorias y financiamiento
+1-2 fuentes de financiamiento relevantes para esta línea de investigación en Centroamérica/Latinoamérica.
+
+## Software recomendado
+| Tarea | Herramienta | Costo | Enlace |
+|---|---|---|---|
+| Gestión de referencias | Zotero | Gratis | zotero.org |
+| Análisis estadístico | R + RStudio | Gratis | rstudio.com |
+(2 filas más según el campo específico)
+
+## Colaboradores potenciales
+Instituciones o grupos de investigación en Centroamérica que trabajen este tema.
+
+## Cronograma orientativo
+| Semana | Actividad |
+|---|---|
+| 1-2 | Verificación de fuentes + búsqueda en bases de datos |
+| 3-4 | Construcción del marco teórico |
+| 5-6 | Diseño del instrumento |
+| 7-8 | Piloto y ajustes |`
   }
-]
+];
 
 var state1 = {rr:'pending',px:'pending',ju:'pending'};
-var state2 = {je:'pending',hy:'pending',ga:'pending'};
+var state2 = {je:'pending',hy:'pending',ga:'pending',rt:'pending'};
 
+/* ── STATUS ──────────────────────────────────────────────── */
 function setStatus(id, s) {
-  // Update state objects so interval counters detect completion correctly
   if (state1 && id in state1) state1[id] = s;
   if (state2 && id in state2) state2[id] = s;
   var el = document.getElementById('status-'+id);
+  if (!el) return;
+  var map = {pending:['pending','Pendiente'],loading:['loading',''],done:['done','Listo'],error:['error','Error']};
+  var r = map[s]||map.pending;
+  el.className = 'card-status status-'+r[0];
+  if (s==='loading') el.innerHTML='<span class="spinner"></span>Procesando...';
+  else el.textContent = r[1];
+}
+
+/* ── SUFFIX for compare mode ─────────────────────────────── */
+function setStatusSuffix(id, suffix, s) {
+  var el = document.getElementById('status-'+id+suffix);
   if (!el) return;
   var map = {pending:['pending','Pendiente'],loading:['loading',''],done:['done','Listo'],error:['error','Error']};
   var r = map[s]||map.pending;
@@ -638,6 +791,7 @@ function toggleCard(id) {
   chev.classList.toggle('open',!open);
 }
 
+/* ── MARKDOWN RENDERER ───────────────────────────────────── */
 function renderMarkdown(text) {
   return text
     .replace(/##CHARTDATA[\s\S]*$/,'').replace(/##BARDATA[\s\S]*$/,'')
@@ -647,8 +801,17 @@ function renderMarkdown(text) {
     .replace(/^---$/gm,'<hr>').replace(/^\d+\. (.+)$/gm,'<li>$1</li>')
     .replace(/^\- (.+)$/gm,'<li>$1</li>')
     .replace(/(<li>[\s\S]*?<\/li>\n?)+/g,function(m){return '<ul>'+m+'</ul>';})
-    .replace(/\[([^\]]+),\s*(\d{4}[^\]]*)\]/g,'<span class="cite-chip"><i class="ti ti-link" style="font-size:10px"></i>$1, $2</span>')
-    .split('\n').map(function(l){return l.startsWith('<')?l:l?'<p>'+l+'</p>':'' ;}).join('');
+    // SCHOLAR CITE CHIPS — each citation gets a verify button
+    .replace(/\[([^\]]+),\s*(\d{4}[^\]]*)\]/g, function(match, author, rest) {
+      var query = encodeURIComponent(author + ' ' + rest.replace(/\*/g,'').trim());
+      var scholarUrl = 'https://scholar.google.com/scholar?q=' + query;
+      return '<span class="cite-group">' +
+        '<span class="cite-chip"><i class="ti ti-link" style="font-size:10px"></i>' + author + ', ' + rest + '</span>' +
+        '<a class="cite-scholar" href="' + scholarUrl + '" target="_blank" rel="noopener" title="Verificar en Google Scholar">' +
+        '<i class="ti ti-external-link"></i></a>' +
+        '</span>';
+    })
+    .split('\n').map(function(l){return l.startsWith('<')?l:l?'<p>'+l+'</p>':'';}).join('');
 }
 
 function extractJSON(text, key) {
@@ -688,56 +851,142 @@ function renderBarChart(cid, data) {
   setTimeout(function(){c.querySelectorAll('.bar-fill').forEach(function(b){b.style.width=b.dataset.w+'%';});},80);
 }
 
-function addDownloadButton(cardId, mdText) {
-  var body = document.getElementById('body-'+cardId);
-  if (!body) return;
-  var slug = currentTopic.slice(0,40).replace(/[^a-zA-Z0-9]/g,'-').replace(/-+/g,'-');
-  var btn = document.createElement('a');
-  btn.className = 'copy-btn';
-  btn.style.cssText = 'background:var(--teal-dim);border-color:rgba(20,163,154,.35);color:var(--eyebrow);text-decoration:none';
-  btn.innerHTML = '<i class="ti ti-download" style="font-size:13px"></i> Descargar informe .md';
-  btn.href = 'data:text/markdown;charset=utf-8,' + encodeURIComponent(mdText);
-  btn.download = 'informe-' + slug + '.md';
-  body.appendChild(btn);
+/* ── APA EXTRACTOR ───────────────────────────────────────── */
+function extractAPABlock(mdText) {
+  var refMatch = mdText.match(/##\s*(?:7\.\s*)?Referencias[\s\S]*?(?=\n##|$)/i);
+  if (refMatch) return refMatch[0].replace(/^##.+\n/, '').trim();
+  // Fallback: extract all [Author, Year, *Journal*] patterns
+  var cites = [];
+  var re = /\[([^\]]+,\s*\d{4}[^\]]*)\]/g;
+  var m;
+  while ((m = re.exec(mdText)) !== null) {
+    cites.push(m[1].replace(/\*/g,'').trim());
+  }
+  return cites.length ? cites.join('\n') : 'No se encontraron referencias APA en este contenido.';
 }
 
-function addKimiButton(cardId, mdText) {
-  var body = document.getElementById('body-'+cardId);
-  if (!body) return;
-  // Store content for clipboard, then open Kimi
-  var btn = document.createElement('button');
-  btn.className = 'copy-btn';
-  btn.style.cssText = 'background:rgba(6,182,212,.08);border-color:rgba(6,182,212,.25);color:#06b6d4';
-  btn.innerHTML = '<i class="ti ti-external-link" style="font-size:13px"></i> Abrir en Kimi AI con este contenido';
-  btn.onclick = function() {
-    navigator.clipboard.writeText(mdText).then(function(){
-      showToast('Contenido copiado -- pégalo en Kimi AI', '#06b6d4');
-      setTimeout(function(){ window.open('https://kimi.ai','_blank'); }, 800);
-    }).catch(function(){
-      window.open('https://kimi.ai','_blank');
-    });
-  };
-  body.appendChild(btn);
+function makeBibTeX(mdText, topic) {
+  var entries = [];
+  var re = /\[([^,\]]+),\s*(\d{4})[^\]]*\]/g;
+  var m; var count = 0;
+  while ((m = re.exec(mdText)) !== null && count < 8) {
+    var author = m[1].trim();
+    var year = m[2];
+    var key = author.split(' ')[0].replace(/[^a-zA-Z]/g,'') + year;
+    entries.push('@article{' + key + ',\n  author = {' + author + '},\n  year   = {' + year + '},\n  title  = {[Verificar título en Google Scholar]},\n  journal= {[Verificar journal]},\n  note   = {Tema de búsqueda: ' + topic + '}\n}');
+    count++;
+  }
+  return entries.length ? entries.join('\n\n') : '% No se pudieron extraer entradas BibTeX de este contenido.';
 }
 
-function addCopyButton(cardId) {
+/* ── ACTION BUTTONS ──────────────────────────────────────── */
+function addActionButtons(cardId, mdText, options) {
   var body = document.getElementById('body-'+cardId);
-  var mdEl = document.getElementById('md-'+cardId);
-  if (!body||!mdEl) return;
-  var btn = document.createElement('button');
-  btn.className='copy-btn';
-  btn.innerHTML='<i class="ti ti-copy" style="font-size:13px"></i> Copiar texto';
-  btn.onclick=function(){
-    var text = mdEl.innerText||mdEl.textContent;
+  if (!body) return;
+  var wrap = document.createElement('div');
+  wrap.className = 'action-btns';
+
+  // Copy
+  var btnCopy = document.createElement('button');
+  btnCopy.className = 'act-btn act-btn-copy';
+  btnCopy.innerHTML = '<i class="ti ti-copy" style="font-size:13px"></i> Copiar texto';
+  btnCopy.onclick = function(){
+    var mdEl = document.getElementById('md-'+cardId);
+    var text = mdEl ? (mdEl.innerText||mdEl.textContent) : '';
     navigator.clipboard.writeText(text).then(function(){showToast('Copiado al portapapeles');}).catch(function(){});
   };
-  body.appendChild(btn);
+  wrap.appendChild(btnCopy);
+
+  if (options && options.download) {
+    var slug = currentTopic.slice(0,40).replace(/[^a-zA-Z0-9]/g,'-').replace(/-+/g,'-');
+    var btnDl = document.createElement('a');
+    btnDl.className = 'act-btn act-btn-dl';
+    btnDl.innerHTML = '<i class="ti ti-download" style="font-size:13px"></i> Descargar .md';
+    btnDl.href = 'data:text/markdown;charset=utf-8,' + encodeURIComponent(mdText);
+    btnDl.download = 'informe-' + slug + '.md';
+    wrap.appendChild(btnDl);
+  }
+
+  if (options && options.apa) {
+    var btnAPA = document.createElement('button');
+    btnAPA.className = 'act-btn act-btn-apa';
+    btnAPA.innerHTML = '<i class="ti ti-list" style="font-size:13px"></i> Exportar APA 7';
+    btnAPA.onclick = function(){
+      var apa = extractAPABlock(mdText);
+      navigator.clipboard.writeText(apa).then(function(){
+        showToast('Referencias APA copiadas', '#8B7EC8');
+        var slug2 = currentTopic.slice(0,30).replace(/[^a-zA-Z0-9]/g,'-');
+        var a = document.createElement('a');
+        a.href = 'data:text/plain;charset=utf-8,' + encodeURIComponent(apa);
+        a.download = 'referencias-apa-' + slug2 + '.txt';
+        a.click();
+      }).catch(function(){});
+    };
+    wrap.appendChild(btnAPA);
+  }
+
+  if (options && options.bibtex) {
+    var btnBib = document.createElement('button');
+    btnBib.className = 'act-btn act-btn-bib';
+    btnBib.innerHTML = '<i class="ti ti-braces" style="font-size:13px"></i> Exportar BibTeX';
+    btnBib.onclick = function(){
+      var bib = makeBibTeX(mdText, currentTopic);
+      navigator.clipboard.writeText(bib).then(function(){
+        showToast('BibTeX copiado', '#5BA3B0');
+        var slug3 = currentTopic.slice(0,30).replace(/[^a-zA-Z0-9]/g,'-');
+        var a = document.createElement('a');
+        a.href = 'data:text/plain;charset=utf-8,' + encodeURIComponent(bib);
+        a.download = 'referencias-' + slug3 + '.bib';
+        a.click();
+      }).catch(function(){});
+    };
+    wrap.appendChild(btnBib);
+  }
+
+  if (options && options.kimi) {
+    var btnKimi = document.createElement('button');
+    btnKimi.className = 'act-btn act-btn-kimi';
+    btnKimi.innerHTML = '<i class="ti ti-external-link" style="font-size:13px"></i> Abrir en Kimi AI';
+    btnKimi.onclick = function(){
+      navigator.clipboard.writeText(mdText).then(function(){
+        showToast('Contenido copiado — pégalo en Kimi AI', '#06b6d4');
+        setTimeout(function(){ window.open('https://kimi.ai','_blank'); }, 800);
+      }).catch(function(){ window.open('https://kimi.ai','_blank'); });
+    };
+    wrap.appendChild(btnKimi);
+  }
+
+  body.appendChild(wrap);
 }
 
+/* ── CARD HTML BUILDER ───────────────────────────────────── */
+function makeCardHTML(c, suffix) {
+  suffix = suffix || '';
+  var idSuffix = c.id + suffix;
+  return '<div class="result-card '+c.cls+'" id="card-'+idSuffix+'">'+
+    '<div class="card-header" onclick="toggleCard(\''+idSuffix+'\')">'+
+      '<div class="tool-icon"><i class="ti '+c.icon+'"></i></div>'+
+      '<div class="card-meta"><div class="card-tool-name">'+c.name+'</div><div class="card-tool-desc">'+c.desc+'</div></div>'+
+      '<span class="card-status status-pending" id="status-'+idSuffix+'">Pendiente</span>'+
+      '<i class="ti ti-chevron-down chevron open" id="chev-'+idSuffix+'"></i>'+
+    '</div>'+
+    '<div class="card-body open" id="body-'+idSuffix+'">'+
+      '<div class="skeleton-wrap" id="skeleton-'+idSuffix+'">'+
+        '<div class="skeleton-line" style="height:12px;width:80%"></div>'+
+        '<div class="skeleton-line" style="height:12px;width:65%"></div>'+
+        '<div class="skeleton-line" style="height:12px;width:75%"></div>'+
+        '<div class="skeleton-line" style="height:12px;width:55%"></div>'+
+        '<div class="skeleton-line" style="height:12px;width:70%"></div>'+
+      '</div>'+
+      '<div class="md-content" id="md-'+idSuffix+'" style="display:none"></div>'+
+      '<div id="chart-'+idSuffix+'"></div>'+
+    '</div>'+
+  '</div>';
+}
+
+/* ── CLAUDE API CALL ─────────────────────────────────────── */
 async function callClaude(system, userMsg, maxTok, attempt) {
   attempt = attempt || 1;
-  // 'system' puede ser un string (sin cache) o un array de bloques con cache_control
-  // (usado para cachear contexto largo y reutilizable entre llamadas).
   var r = await fetch(PROXY_URL,{
     method:'POST',
     mode:'cors',
@@ -747,10 +996,8 @@ async function callClaude(system, userMsg, maxTok, attempt) {
   });
   var d=await r.json();
   if(!r.ok) {
-    // Retry on rate limit (429) with exponential backoff
-    if((r.status===429||( d.error&&d.error.message&&d.error.message.indexOf('rate limit')>-1)) && attempt<4) {
-      var wait = attempt * 20000; // 20s, 40s, 60s
-      console.log('Rate limit hit, retrying in '+wait/1000+'s (attempt '+attempt+')');
+    if((r.status===429||(d.error&&d.error.message&&d.error.message.indexOf('rate limit')>-1)) && attempt<4) {
+      var wait = attempt * 20000;
       await new Promise(function(res){setTimeout(res,wait);});
       return callClaude(system, userMsg, maxTok, attempt+1);
     }
@@ -759,94 +1006,67 @@ async function callClaude(system, userMsg, maxTok, attempt) {
   return d.content.map(function(x){return x.text||'';}).join('');
 }
 
-function makeCardHTML(c) {
-  return '<div class="result-card '+c.cls+'" id="card-'+c.id+'">'+
-    '<div class="card-header" onclick="toggleCard(\''+c.id+'\')">'+
-      '<div class="tool-icon"><i class="ti '+c.icon+'"></i></div>'+
-      '<div class="card-meta"><div class="card-tool-name">'+c.name+'</div><div class="card-tool-desc">'+c.desc+'</div></div>'+
-      '<span class="card-status status-pending" id="status-'+c.id+'">Pendiente</span>'+
-      '<i class="ti ti-chevron-down chevron open" id="chev-'+c.id+'"></i>'+
-    '</div>'+
-    '<div class="card-body open" id="body-'+c.id+'">'+
-      '<div class="skeleton-wrap" id="skeleton-'+c.id+'">'+
-        '<div class="skeleton-line" style="height:12px;width:80%"></div>'+
-        '<div class="skeleton-line" style="height:12px;width:65%"></div>'+
-        '<div class="skeleton-line" style="height:12px;width:75%"></div>'+
-        '<div class="skeleton-line" style="height:12px;width:55%"></div>'+
-        '<div class="skeleton-line" style="height:12px;width:70%"></div>'+
-      '</div>'+
-      '<div class="md-content" id="md-'+c.id+'" style="display:none"></div>'+
-      '<div id="chart-'+c.id+'"></div>'+
-    '</div>'+
-  '</div>';
-}
-
-async function runCard1(card, topic) {
-  setStatus(card.id,'loading');
+/* ── STAGE 1 CARD RUN ────────────────────────────────────── */
+async function runCard1(card, topic, resultsStore, suffix) {
+  suffix = suffix || '';
+  var idSuffix = card.id + suffix;
+  setStatusSuffix(card.id, suffix, 'loading');
   try {
-    // System prompt cacheado: es estático entre ejecuciones (no depende del tema),
-    // así que el modelo lo reutiliza desde caché (lectura ~90% más barata) en cada
-    // tema nuevo que se investigue durante la sesión/TTL de caché.
     var cachedSystem = [{type:'text', text:card.system, cache_control:{type:'ephemeral'}}];
     var text = await callClaude(cachedSystem,'Tema de investigación: "'+topic+'"',1200);
-    globalResults[card.id] = text;
-    var sk=document.getElementById('skeleton-'+card.id); if(sk) sk.style.display='none';
-    var mdEl=document.getElementById('md-'+card.id);
+    resultsStore[card.id] = text;
+    var sk=document.getElementById('skeleton-'+idSuffix); if(sk) sk.style.display='none';
+    var mdEl=document.getElementById('md-'+idSuffix);
     if(mdEl){mdEl.innerHTML=renderMarkdown(text);mdEl.style.display='block';}
-    if(card.id==='rr') renderLineChart('chart-'+card.id,extractJSON(text,'CHARTDATA'));
-    if(card.id==='ju') renderBarChart('chart-'+card.id,extractJSON(text,'BARDATA'));
-    addCopyButton(card.id);
-    setStatus(card.id,'done');
+    if(card.id==='rr') renderLineChart('chart-'+idSuffix, extractJSON(text,'CHARTDATA'));
+    if(card.id==='ju') renderBarChart('chart-'+idSuffix, extractJSON(text,'BARDATA'));
+    var opts = {};
+    if(card.id==='px') opts = {apa: true};
+    addActionButtons(idSuffix, text, opts);
+    setStatusSuffix(card.id, suffix, 'done');
   } catch(e) {
-    var sk=document.getElementById('skeleton-'+card.id); if(sk) sk.style.display='none';
-    var mdEl=document.getElementById('md-'+card.id);
-    if(mdEl){
-      mdEl.innerHTML='<p style="color:#fca5a5;padding:12px 0">Error: '+e.message+'</p>';
-      mdEl.style.display='block';
-    }
-    setStatus(card.id,'error');
+    var sk=document.getElementById('skeleton-'+idSuffix); if(sk) sk.style.display='none';
+    var mdEl=document.getElementById('md-'+idSuffix);
+    if(mdEl){mdEl.innerHTML='<p style="color:#fca5a5;padding:12px 0">Error: '+e.message+'</p>';mdEl.style.display='block';}
+    setStatusSuffix(card.id, suffix, 'error');
   }
-  // Safety check: trigger stage2 immediately if all 3 done
-  var done1=Object.values(state1).filter(function(s){return s==='done'||s==='error';}).length;
-  if(done1===3) showStage2Trigger();
 }
 
+/* ── STAGE 2 CARD RUN ────────────────────────────────────── */
 async function runCard2(card, topic, context) {
   setStatus(card.id,'loading');
-  // Show waiting message while staggered
-  var mdEl2=document.getElementById('md-'+card.id);
-  if(mdEl2){ mdEl2.innerHTML='<p style="color:var(--text2);padding:12px 0;font-size:13px"><span class="spinner"></span>En cola -- respetando limite de tokens por minuto...</p>'; mdEl2.style.display='block'; }
+  var sharedContext = 'Tema: "'+topic+'"\n\n=== RESULTADOS DE ANÁLISIS PREVIO ===\n\n'+
+    '--- Research Rabbit (Literatura) ---\n'+context.rr+'\n\n'+
+    '--- Perplexity AI (Evidencia) ---\n'+context.px+'\n\n'+
+    '--- Julius AI (Datos) ---\n'+context.ju;
+  var cachedSystem = [
+    {type:'text', text:card.system, cache_control:{type:'ephemeral'}},
+    {type:'text', text:sharedContext, cache_control:{type:'ephemeral'}}
+  ];
   try {
-    // El contexto de Etapa 1 (rr+px+ju) es IDÉNTICO en las 3 llamadas de Stage 2.
-    // Se cachea como segundo bloque del 'system' para que Jenni/Hypothesis/Kimi
-    // reutilicen la misma lectura cacheada en vez de pagar ~3-4k tokens de input
-    // tres veces. El bloque de instrucciones de cada herramienta se cachea aparte
-    // porque cambia de card a card.
-    var sharedContext = 'Tema: "'+topic+'"\n\n=== RESULTADOS DE ANÁLISIS PREVIO ===\n\n'+
-      '--- Research Rabbit (Literatura) ---\n'+context.rr+'\n\n'+
-      '--- Perplexity AI (Evidencia) ---\n'+context.px+'\n\n'+
-      '--- Julius AI (Datos) ---\n'+context.ju;
-    var cachedSystem = [
-      {type:'text', text:card.system, cache_control:{type:'ephemeral'}},
-      {type:'text', text:sharedContext, cache_control:{type:'ephemeral'}}
-    ];
     var text = await callClaude(cachedSystem, 'Genera tu entregable según las instrucciones del system y el contexto de análisis previo.', 900);
     var sk=document.getElementById('skeleton-'+card.id); if(sk) sk.style.display='none';
     var mdEl=document.getElementById('md-'+card.id);
     if(mdEl){mdEl.innerHTML=renderMarkdown(text);mdEl.style.display='block';}
-    addCopyButton(card.id);
-    if(card.id==='je') addDownloadButton(card.id, text);
-    if(card.id==='ga') addKimiButton(card.id, text);
+    var opts = {apa: card.id==='je'||card.id==='ga', bibtex: card.id==='je', download: card.id==='je', kimi: card.id==='ga'};
+    addActionButtons(card.id, text, opts);
     setStatus(card.id,'done');
   } catch(e) {
     var sk=document.getElementById('skeleton-'+card.id); if(sk) sk.style.display='none';
     var mdEl=document.getElementById('md-'+card.id);
-    if(mdEl){
-      mdEl.innerHTML='<p style="color:#fca5a5;padding:12px 0">Error: '+e.message+'</p>';
-      mdEl.style.display='block';
-    }
+    if(mdEl){mdEl.innerHTML='<p style="color:#fca5a5;padding:12px 0">Error: '+e.message+'</p>';mdEl.style.display='block';}
     setStatus(card.id,'error');
   }
+}
+
+/* ── ROADMAP CARD RENDER ─────────────────────────────────── */
+function renderRoadmapCard(mdText) {
+  // Replace link URLs with actual <a> elements
+  var sk=document.getElementById('skeleton-rt'); if(sk) sk.style.display='none';
+  var mdEl=document.getElementById('md-rt');
+  if(mdEl){mdEl.innerHTML=renderMarkdown(mdText);mdEl.style.display='block';}
+  addActionButtons('rt', mdText, {});
+  setStatus('rt','done');
 }
 
 function showStage2Trigger() {
@@ -856,6 +1076,7 @@ function showStage2Trigger() {
   if (fab) { fab.className='fab-stage2 visible'; }
 }
 
+/* ── START STAGE 2 ───────────────────────────────────────── */
 async function startStage2() {
   var fab = document.getElementById('fabStage2');
   if (fab) fab.className='fab-stage2';
@@ -866,87 +1087,148 @@ async function startStage2() {
   document.getElementById('pill2').className='stage-pill active';
 
   var res = document.getElementById('results');
-
   var div2 = document.createElement('div');
-  div2.innerHTML='<div class="section-divider"><div class="section-divider-line"></div><div class="section-divider-badge stage2-badge"><i class="ti ti-sparkles" style="font-size:12px"></i> Etapa 2 -- Documento e Investigación Formal</div><div class="section-divider-line"></div></div>'+
+  div2.innerHTML='<div class="section-divider"><div class="section-divider-line"></div>'+
+    '<div class="section-divider-badge stage2-badge"><i class="ti ti-sparkles" style="font-size:12px"></i> Etapa 2 — Documento e Investigación Formal</div>'+
+    '<div class="section-divider-line"></div></div>'+
     STAGE2.map(function(c){return makeCardHTML(c);}).join('');
   res.appendChild(div2);
-
   div2.scrollIntoView({behavior:'smooth',block:'start'});
 
   setProgress(5,2);
-  state2={je:'pending',hy:'pending',ga:'pending'};
+  state2={je:'pending',hy:'pending',ga:'pending',rt:'pending'};
 
   var completed2 = 0;
   function onCard2Done() {
     completed2++;
-    setProgress(5 + completed2*30, 2);
-    if (completed2 === 3) {
+    setProgress(5 + completed2*23, 2);
+    if (completed2 === 4) {
       setProgress(100, 2);
-      showToast('Pipeline completo -- 6 herramientas listas', '#14A39A');
+      showToast('Pipeline completo — 7 herramientas listas', '#14A39A');
     }
   }
 
-  // Stagger Stage 2 calls: 0s, 22s, 44s to respect 4k tokens/min rate limit
+  // Stagger: 0s, 22s, 44s, 66s — show countdowns before each
   STAGE2.forEach(function(c, i) {
+    if (i > 0) makeCountdown(c.id, i * 22, c.name);
     setTimeout(function(){
       runCard2(c, currentTopic, globalResults).then(onCard2Done).catch(onCard2Done);
     }, i * 22000);
   });
 }
 
+/* ── START RESEARCH ──────────────────────────────────────── */
 async function startResearch() {
   var topic = document.getElementById('topicInput').value.trim();
   if (!topic){document.getElementById('topicInput').focus();return;}
 
+  var topicB = '';
+  if (compareMode) {
+    topicB = document.getElementById('topicInputB').value.trim();
+    if (!topicB){document.getElementById('topicInputB').focus();return;}
+  }
+
   currentTopic = topic;
+  currentTopicB = topicB;
   globalResults = {rr:'',px:'',ju:''};
+  globalResultsB = {rr:'',px:'',ju:''};
+
+  saveHistory(topic);
+  if (topicB) saveHistory(topicB);
 
   var btn=document.getElementById('runBtn');
   btn.disabled=true;
-  btn.innerHTML='<span class="spinner"></span>Investigando...';
+  btn.innerHTML='<span class="spinner"></span>'+(compareMode?'Comparando...':'Investigando...');
   state1={rr:'pending',px:'pending',ju:'pending'};
 
   document.getElementById('pill1').className='stage-pill active';
   document.getElementById('pill2').className='stage-pill';
 
   var res=document.getElementById('results');
-  res.innerHTML='<div class="topic-tag"><i class="ti ti-tag" style="font-size:12px;vertical-align:-1px"></i> '+topic+'</div>'+
-    '<div class="section-divider"><div class="section-divider-line"></div><div class="section-divider-badge stage1-badge"><i class="ti ti-search" style="font-size:12px"></i> Etapa 1 -- Revisión de Evidencia Científica</div><div class="section-divider-line"></div></div>'+
-    STAGE1.map(function(c){return makeCardHTML(c);}).join('')+
-    '<div class="stage2-trigger" id="stage2Trigger">'+
-      '<div class="stage2-info">'+
-        '<h3><i class="ti ti-sparkles" style="font-size:14px;vertical-align:-1px;margin-right:5px;color:#2DD4BF"></i>Análisis listo -- genera tu documento e informe</h3>'+
-        '<p>Con los hallazgos de la Etapa 1 se generará un informe investigativo en Markdown descargable y el contenido para tu presentación en Kimi.</p>'+
+
+  // VERIFICATION BANNER
+  var bannerHTML = '<div class="verify-banner">'+
+    '<i class="ti ti-alert-triangle"></i>'+
+    '<div class="verify-banner-text">'+
+    '<strong>⚠️ Verifica siempre las fuentes antes de usarlas</strong> — Este hub usa modelos de lenguaje que pueden generar citas incorrectas. '+
+    'Cada referencia tiene un botón <i class="ti ti-external-link" style="font-size:11px;vertical-align:-1px"></i> para verificarla en Google Scholar. '+
+    'Usa también <a href="https://www.semanticscholar.org" target="_blank">Semantic Scholar</a> y '+
+    '<a href="https://pubmed.ncbi.nlm.nih.gov" target="_blank">PubMed</a> para confirmar existencia del paper.'+
+    '</div></div>';
+
+  if (!compareMode) {
+    res.innerHTML='<div class="topic-tag"><i class="ti ti-tag" style="font-size:12px;vertical-align:-1px"></i> '+topic+'</div>'+
+      bannerHTML+
+      '<div class="section-divider"><div class="section-divider-line"></div>'+
+      '<div class="section-divider-badge stage1-badge"><i class="ti ti-search" style="font-size:12px"></i> Etapa 1 — Revisión de Evidencia Científica</div>'+
+      '<div class="section-divider-line"></div></div>'+
+      STAGE1.map(function(c){return makeCardHTML(c,'');}).join('')+
+      '<div class="stage2-trigger" id="stage2Trigger">'+
+        '<div class="stage2-info">'+
+          '<h3><i class="ti ti-sparkles" style="font-size:14px;vertical-align:-1px;margin-right:5px;color:#2DD4BF"></i>Análisis listo — genera tu documento e informe</h3>'+
+          '<p>Se generará informe investigativo descargable (.md), presentación para Kimi y Hoja de Ruta del investigador.</p>'+
+        '</div>'+
+        '<button class="stage2-btn" id="stage2TriggerBtn" onclick="startStage2()">'+
+          '<i class="ti ti-sparkles"></i>Iniciar Etapa 2'+
+        '</button>'+
+      '</div>';
+  } else {
+    // COMPARE MODE — two columns
+    res.innerHTML='<div style="display:flex;gap:10px;flex-wrap:wrap;margin-bottom:.875rem">'+
+      '<div class="topic-tag"><i class="ti ti-tag" style="font-size:12px;vertical-align:-1px"></i> A: '+topic+'</div>'+
+      '<div class="topic-tag" style="background:rgba(56,189,248,.07);border-color:rgba(56,189,248,.25);color:var(--rt)"><i class="ti ti-tag" style="font-size:12px;vertical-align:-1px"></i> B: '+topicB+'</div>'+
       '</div>'+
-      '<button class="stage2-btn" id="stage2TriggerBtn" onclick="startStage2()">'+
-        '<i class="ti ti-sparkles"></i>Iniciar Etapa 2'+
-      '</button>'+
-    '</div>';
+      bannerHTML+
+      '<div class="section-divider"><div class="section-divider-line"></div>'+
+      '<div class="section-divider-badge compare-badge"><i class="ti ti-layout-columns" style="font-size:12px"></i> Comparación en paralelo</div>'+
+      '<div class="section-divider-line"></div></div>'+
+      STAGE1.map(function(c){
+        return '<div class="section-divider" style="margin:.5rem 0 .5rem"><div class="section-divider-line"></div>'+
+          '<div class="section-divider-badge stage1-badge" style="font-size:10.5px"><i class="ti '+c.icon+'" style="font-size:11px"></i> '+c.name+'</div>'+
+          '<div class="section-divider-line"></div></div>'+
+          '<div class="compare-cols">'+makeCardHTML(c,'-a')+makeCardHTML(c,'-b')+'</div>';
+      }).join('');
+  }
 
   setProgress(5,1);
 
-  // Track completions directly -- no interval race condition
+  var totalCards = compareMode ? 6 : 3;
   var completed1 = 0;
   function onCard1Done() {
     completed1++;
-    setProgress(5 + completed1*30, 1);
-    if (completed1 === 3) {
+    setProgress(5 + Math.round(completed1/totalCards*90), 1);
+    if (completed1 === totalCards) {
       setProgress(100, 1);
-      showStage2Trigger();
+      if (!compareMode) showStage2Trigger();
       btn.disabled=false;
-      btn.innerHTML='<i class="ti ti-telescope"></i>Investigar';
+      btn.innerHTML='<i class="ti ti-telescope"></i>'+(compareMode?'Comparar':'Investigar');
     }
   }
 
-  STAGE1.forEach(function(c, i) {
-    setTimeout(function(){
-      runCard1(c, topic).then(onCard1Done).catch(onCard1Done);
-    }, i * 350);
-  });
+  if (!compareMode) {
+    STAGE1.forEach(function(c, i) {
+      setTimeout(function(){
+        runCard1(c, topic, globalResults, '').then(onCard1Done).catch(onCard1Done);
+      }, i * 350);
+    });
+  } else {
+    // Run A and B in parallel, staggered per pair
+    STAGE1.forEach(function(c, i) {
+      setTimeout(function(){
+        runCard1(c, topic, globalResults, '-a').then(onCard1Done).catch(onCard1Done);
+      }, i * 400);
+      setTimeout(function(){
+        runCard1(c, topicB, globalResultsB, '-b').then(onCard1Done).catch(onCard1Done);
+      }, i * 400 + 200);
+    });
+  }
 }
 
 document.getElementById('topicInput').addEventListener('keydown',function(e){if(e.key==='Enter')startResearch();});
+document.getElementById('topicInputB') && document.getElementById('topicInputB').addEventListener('keydown',function(e){if(e.key==='Enter')startResearch();});
+
+// Init history on load
+renderHistory();
 </script>
 </body>
 </html>
