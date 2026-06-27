@@ -309,18 +309,14 @@ body{font-family:'Inter',system-ui,-apple-system,sans-serif;background:var(--bg)
   </div>
 </div>
 
-<!-- API KEY -->
-<div class="api-banner" id="apiBanner">
-  <i class="ti ti-key icon"></i>
+<!-- ESTADO DEL PROXY (sin input de API Key: la clave vive solo en el servidor) -->
+<div class="api-banner" id="apiBanner" style="display:none">
+  <i class="ti ti-alert-triangle icon"></i>
   <div class="api-banner-text">
-    <strong>Configura tu API Key de Anthropic</strong> — Obtén tu clave gratis en <strong>console.anthropic.com</strong> → API Keys.
-    <div style="font-size:11.5px;color:rgba(143,181,178,.6);margin-top:4px;margin-bottom:8px">
+    <strong>El servicio no está disponible</strong> — no se pudo conectar con el proxy.
+    <div style="font-size:11.5px;color:rgba(143,181,178,.6);margin-top:4px">
       <i class="ti ti-shield-check" style="font-size:12px;vertical-align:-1px"></i>
-      Funciona en iOS, Android y desktop — conexión segura vía proxy UAM.
-    </div>
-    <div class="api-key-wrap">
-      <input type="password" id="apiKeyInput" placeholder="sk-ant-api03-..." autocomplete="off"/>
-      <button class="save-key-btn" onclick="saveKey()"><i class="ti ti-check"></i> Guardar</button>
+      Intenta de nuevo en unos segundos. Si el problema persiste, contacta al administrador del hub.
     </div>
   </div>
 </div>
@@ -348,7 +344,6 @@ body{font-family:'Inter',system-ui,-apple-system,sans-serif;background:var(--bg)
 </div>
 
 <script>
-var API_KEY = localStorage.getItem('anthropic_key') || '';
 var PROXY_URL = 'https://uam.jesandoval.workers.dev';
 
 // Detect file:// protocol (blocks CORS on iOS Safari)
@@ -358,16 +353,6 @@ if (location.protocol === 'file:') {
 
 var globalResults = {rr:'', px:'', ju:''};
 var currentTopic = '';
-
-function saveKey() {
-  var val = document.getElementById('apiKeyInput').value.trim();
-  if (!val.startsWith('sk-ant')) { alert('La clave debe empezar con sk-ant-...'); return; }
-  API_KEY = val;
-  localStorage.setItem('anthropic_key', val);
-  document.getElementById('apiBanner').style.display = 'none';
-  showToast('API Key guardada');
-}
-if (API_KEY) document.getElementById('apiBanner').style.display = 'none';
 
 function showToast(msg, color) {
   var t = document.createElement('div');
@@ -750,13 +735,14 @@ function addCopyButton(cardId) {
 }
 
 async function callClaude(system, userMsg, maxTok, attempt) {
-  if (!API_KEY) throw new Error('NO_KEY');
   attempt = attempt || 1;
+  // 'system' puede ser un string (sin cache) o un array de bloques con cache_control
+  // (usado para cachear contexto largo y reutilizable entre llamadas).
   var r = await fetch(PROXY_URL,{
     method:'POST',
     mode:'cors',
     credentials:'omit',
-    headers:{'Content-Type':'application/json','x-api-key':API_KEY,'anthropic-version':'2023-06-01'},
+    headers:{'Content-Type':'application/json'},
     body:JSON.stringify({model:'claude-sonnet-4-6',max_tokens:maxTok||1000,system:system,messages:[{role:'user',content:userMsg}]})
   });
   var d=await r.json();
@@ -798,7 +784,11 @@ function makeCardHTML(c) {
 async function runCard1(card, topic) {
   setStatus(card.id,'loading');
   try {
-    var text = await callClaude(card.system,'Tema de investigación: "'+topic+'"',1200);
+    // System prompt cacheado: es estático entre ejecuciones (no depende del tema),
+    // así que el modelo lo reutiliza desde caché (lectura ~90% más barata) en cada
+    // tema nuevo que se investigue durante la sesión/TTL de caché.
+    var cachedSystem = [{type:'text', text:card.system, cache_control:{type:'ephemeral'}}];
+    var text = await callClaude(cachedSystem,'Tema de investigación: "'+topic+'"',1200);
     globalResults[card.id] = text;
     var sk=document.getElementById('skeleton-'+card.id); if(sk) sk.style.display='none';
     var mdEl=document.getElementById('md-'+card.id);
@@ -810,8 +800,10 @@ async function runCard1(card, topic) {
   } catch(e) {
     var sk=document.getElementById('skeleton-'+card.id); if(sk) sk.style.display='none';
     var mdEl=document.getElementById('md-'+card.id);
-    mdEl.innerHTML='<p style="color:#fca5a5;padding:12px 0">'+(e.message==='NO_KEY'?'Configura tu API Key arriba.':'Error: '+e.message)+'</p>';
-    mdEl.style.display='block';
+    if(mdEl){
+      mdEl.innerHTML='<p style="color:#fca5a5;padding:12px 0">Error: '+e.message+'</p>';
+      mdEl.style.display='block';
+    }
     setStatus(card.id,'error');
   }
   // Safety check: trigger stage2 immediately if all 3 done
@@ -825,21 +817,34 @@ async function runCard2(card, topic, context) {
   var mdEl2=document.getElementById('md-'+card.id);
   if(mdEl2){ mdEl2.innerHTML='<p style="color:var(--text2);padding:12px 0;font-size:13px"><span class="spinner"></span>En cola -- respetando limite de tokens por minuto...</p>'; mdEl2.style.display='block'; }
   try {
-    var userMsg = 'Tema: "'+topic+'"\n\n=== RESULTADOS DE ANÁLISIS PREVIO ===\n\n'+
+    // El contexto de Etapa 1 (rr+px+ju) es IDÉNTICO en las 3 llamadas de Stage 2.
+    // Se cachea como segundo bloque del 'system' para que Jenni/Hypothesis/Kimi
+    // reutilicen la misma lectura cacheada en vez de pagar ~3-4k tokens de input
+    // tres veces. El bloque de instrucciones de cada herramienta se cachea aparte
+    // porque cambia de card a card.
+    var sharedContext = 'Tema: "'+topic+'"\n\n=== RESULTADOS DE ANÁLISIS PREVIO ===\n\n'+
       '--- Research Rabbit (Literatura) ---\n'+context.rr+'\n\n'+
       '--- Perplexity AI (Evidencia) ---\n'+context.px+'\n\n'+
       '--- Julius AI (Datos) ---\n'+context.ju;
-    var text = await callClaude(card.system, userMsg, 900);
+    var cachedSystem = [
+      {type:'text', text:card.system, cache_control:{type:'ephemeral'}},
+      {type:'text', text:sharedContext, cache_control:{type:'ephemeral'}}
+    ];
+    var text = await callClaude(cachedSystem, 'Genera tu entregable según las instrucciones del system y el contexto de análisis previo.', 900);
     var sk=document.getElementById('skeleton-'+card.id); if(sk) sk.style.display='none';
     var mdEl=document.getElementById('md-'+card.id);
     if(mdEl){mdEl.innerHTML=renderMarkdown(text);mdEl.style.display='block';}
     addCopyButton(card.id);
+    if(card.id==='je') addDownloadButton(card.id, text);
+    if(card.id==='ga') addKimiButton(card.id, text);
     setStatus(card.id,'done');
   } catch(e) {
     var sk=document.getElementById('skeleton-'+card.id); if(sk) sk.style.display='none';
     var mdEl=document.getElementById('md-'+card.id);
-    mdEl.innerHTML='<p style="color:#fca5a5;padding:12px 0">'+(e.message==='NO_KEY'?'Configura tu API Key arriba.':'Error: '+e.message)+'</p>';
-    mdEl.style.display='block';
+    if(mdEl){
+      mdEl.innerHTML='<p style="color:#fca5a5;padding:12px 0">Error: '+e.message+'</p>';
+      mdEl.style.display='block';
+    }
     setStatus(card.id,'error');
   }
 }
@@ -893,7 +898,6 @@ async function startStage2() {
 async function startResearch() {
   var topic = document.getElementById('topicInput').value.trim();
   if (!topic){document.getElementById('topicInput').focus();return;}
-  if (!API_KEY){document.getElementById('apiBanner').style.display='flex';document.getElementById('apiKeyInput').focus();return;}
 
   currentTopic = topic;
   globalResults = {rr:'',px:'',ju:''};
@@ -943,7 +947,6 @@ async function startResearch() {
 }
 
 document.getElementById('topicInput').addEventListener('keydown',function(e){if(e.key==='Enter')startResearch();});
-document.getElementById('apiKeyInput').addEventListener('keydown',function(e){if(e.key==='Enter')saveKey();});
 </script>
 </body>
 </html>
